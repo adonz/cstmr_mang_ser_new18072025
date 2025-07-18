@@ -1,0 +1,61 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: customer_management
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
+
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/customer_management_service
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 3
+      idle-timeout: 30000
+      connection-timeout: 20000
+      max-lifetime: 1800000
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+      physical_naming_strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 30
+          order_inserts: true
+          order_updates: true
+        lob:
+          non_contextual_creation: true
+        generate_statistics: false
+    open-in-view: false
+
+server:
+  port: 8089  
+
+upload:
+  dir: uploads
+
+masterdata:
+  service:
+    url: http://192.168.1.42:8088
+
+organisation:
+  service:
+    url: http://192.168.1.42:8085
+
+user:
+  service:
+    url: http://192.168.1.42:8082
+
+cors:
+  allowed-origin: "*"
