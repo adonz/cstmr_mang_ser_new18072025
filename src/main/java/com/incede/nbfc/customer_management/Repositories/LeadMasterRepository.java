@@ -24,6 +24,8 @@ public interface LeadMasterRepository extends JpaRepository<LeadMasterModel, Int
 	Page<LeadMasterModel> findByIsDeleteFalse(Pageable pageble);
 
 	LeadMasterModel findByLeadCodeAndIsDeleteFalse(String ver_leadCode);
+
+	boolean existsByLeadIdAndIsDeleteFalse(Integer leadId);
 	
  
 

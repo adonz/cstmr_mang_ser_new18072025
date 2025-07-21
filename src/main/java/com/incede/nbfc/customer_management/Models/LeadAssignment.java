@@ -25,13 +25,13 @@ public class LeadAssignment extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "assignment_id")
-    private Long assignmentId;
+    private Integer assignmentId;
 
     @Column(name = "lead_id", nullable = false)
-    private Long leadId;
+    private Integer leadId;
 
     @Column(name = "assigned_to", nullable = false)
-    private Long assignedTo;
+    private Integer assignedTo;
 
     @Column(name = "assigned_on", nullable = false)
     private LocalDateTime assignedOn;

@@ -12,15 +12,14 @@ import feign.Param;
 
 public interface LeadAssignmentRepository extends JpaRepository<LeadAssignment, Integer> {
 
-	List<LeadAssignment> findByLeadIdAndDeletedFlagFalse(Long leadId);
-	
-	@Query("SELECT l FROM LeadAssignmentEntity l WHERE l.leadId = :leadId ORDER BY l.assignedOn DESC")
-    List<LeadAssignment> findAllByLeadIdOrderByAssignedOnDesc(@Param("leadId") Long leadId);
+	List<LeadAssignment> findByLeadIdAndIsDeleteFalse(Integer leadId);
 
-	@Query("SELECT COUNT(l) FROM LeadAssignmentEntity l WHERE l.leadId = :leadId AND l.deletedFlag = false")
-	long countByLeadIdAndDeletedFlagFalse(@Param("leadId") Long leadId);
+	@Query("SELECT l FROM LeadAssignment l WHERE l.leadId = :leadId ORDER BY l.assignedOn DESC")
+	List<LeadAssignment> findAllByLeadIdOrderByAssignedOnDesc(@Param("leadId") Integer leadId);
 
-	Optional<LeadAssignment> findById(Long assignmentId);
+	@Query("SELECT COUNT(l) FROM LeadAssignment l WHERE l.leadId = :leadId AND l.isDelete = false")
+	Integer countByLeadIdAndDeletedFlagFalse(@Param("leadId") Integer leadId);
 
-	
+	Optional<LeadAssignment> findById(Integer assignmentId);
+
 }

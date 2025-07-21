@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LeadAssignmentDTO {
 
-    private Long assignmentId;
-    private Long leadId;
-    private Long assignedTo;
+    private Integer assignmentId;
+    private Integer leadId;
+    private Integer assignedTo;
     private LocalDateTime assignedOn;
     private Boolean deletedFlag;
     private UUID identityGuid;

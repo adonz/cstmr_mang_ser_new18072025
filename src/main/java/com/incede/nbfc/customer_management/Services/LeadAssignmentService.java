@@ -14,8 +14,10 @@ import com.incede.nbfc.customer_management.DTOs.LeadAssignmentHistoryDTO;
 import com.incede.nbfc.customer_management.Exceptions.ConflictException.ConflictException;
 import com.incede.nbfc.customer_management.Exceptions.DataNotFoundException.DataNotFoundException;
 import com.incede.nbfc.customer_management.FeignClients.UserClient;
+import com.incede.nbfc.customer_management.FeignClientsModels.UserInfoDTO;
 import com.incede.nbfc.customer_management.Models.LeadAssignment;
 import com.incede.nbfc.customer_management.Repositories.LeadAssignmentRepository;
+import com.incede.nbfc.customer_management.Repositories.LeadMasterRepository;
 import com.incede.nbfc.customer_management.Response.ResponseWrapper;
 
 import jakarta.transaction.Transactional;
@@ -42,7 +44,7 @@ public class LeadAssignmentService {
         boolean allowMultipleAssignments = configService.isMultiAssigneeAllowed(); // example hook
 
         if (!allowMultipleAssignments) {
-            long activeCount = leadAssignmentRepository.countByLeadIdAndDeletedFlagFalse(dto.getLeadId());
+            Integer activeCount = leadAssignmentRepository.countByLeadIdAndDeletedFlagFalse(dto.getLeadId());
             if (activeCount > 0) {
                 throw new ConflictException("Lead is already actively assigned to another user.");
             }
@@ -71,17 +73,17 @@ public class LeadAssignmentService {
     }
     
     @Transactional
-    public LeadAssignmentDTO reassignLead(Long leadId, Long newAssignedTo, Integer adminId) {
+    public LeadAssignmentDTO reassignLead(Integer leadId, Integer newAssignedTo, Integer adminId) {
 
         // ✅ Validate active lead existence
-        boolean leadExists = leadMasterRepository.existsByLeadIdAndDeletedFlagFalse(leadId);
+        boolean leadExists = leadMasterRepository.existsByLeadIdAndIsDeleteFalse(leadId);
         if (!leadExists) {
             throw new DataNotFoundException("Lead not found or inactive.");
         }
 
         // ✅ Soft-delete any existing active assignments
         List<LeadAssignment> currentAssignments =
-            leadAssignmentRepository.findByLeadIdAndDeletedFlagFalse(leadId);
+            leadAssignmentRepository.findByLeadIdAndIsDeleteFalse(leadId);
 
         for (LeadAssignment assignment : currentAssignments) {
             assignment.setIsDelete(true);
@@ -107,7 +109,7 @@ public class LeadAssignmentService {
         return toDTO(saved);
     }
     
-    public List<LeadAssignmentHistoryDTO> getAssignmentHistory(Long leadId) {
+    public List<LeadAssignmentHistoryDTO> getAssignmentHistory(Integer leadId) {
 
         List<LeadAssignment> assignments = leadAssignmentRepository
             .findAllByLeadIdOrderByAssignedOnDesc(leadId);
@@ -124,11 +126,9 @@ public class LeadAssignmentService {
             dto.setCreatedBy(entity.getCreatedBy());
             dto.setIsDelete(entity.getIsDelete());
 
-            // Join with user/staff info via Feign client
             ResponseWrapper<UserInfoDTO> userInfo = userClient.getUserDetails(entity.getAssignedTo());
             if (userInfo != null && userInfo.getData() != null) {
                 dto.setAssignedToName(userInfo.getData().getFullName());
-                dto.setAssignedToRole(userInfo.getData().getRoleName());
             }
 
             return dto;
@@ -136,7 +136,7 @@ public class LeadAssignmentService {
     }
     
     @Transactional
-    public void softDeleteAssignment(Long assignmentId, Integer adminUserId) {
+    public void softDeleteAssignment(Integer assignmentId, Integer adminUserId) {
         LeadAssignment assignment = leadAssignmentRepository.findById(assignmentId)
             .orElseThrow(() -> new DataNotFoundException("Assignment record not found."));
 
@@ -150,6 +150,6 @@ public class LeadAssignmentService {
         leadAssignmentRepository.save(assignment);
     }
 
-
+    		
 
 }

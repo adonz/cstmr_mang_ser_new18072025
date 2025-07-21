@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LeadAssignmentHistoryDTO {
 
-    private Long leadId;
-    private Long assignedTo;
+    private Integer leadId;
+    private Integer assignedTo;
     private String assignedToName;
     private String assignedToRole;
     private LocalDateTime assignedOn;

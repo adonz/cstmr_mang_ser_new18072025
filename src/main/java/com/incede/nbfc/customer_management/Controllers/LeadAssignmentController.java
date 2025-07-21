@@ -20,7 +20,6 @@ public class LeadAssignmentController {
 
 	@Autowired
     private LeadAssignmentService assignmentService;
-
     @PostMapping("/assign")
     public ResponseEntity<ResponseWrapper<LeadAssignmentDTO>> assignLead(
             @RequestBody LeadAssignmentDTO dto) {
@@ -30,8 +29,8 @@ public class LeadAssignmentController {
     
     @PutMapping("/reassign")
     public ResponseEntity<ResponseWrapper<LeadAssignmentDTO>> reassignLead(
-            @RequestParam Long leadId,
-            @RequestParam Long newAssignedTo,
+            @RequestParam Integer leadId,
+            @RequestParam Integer newAssignedTo,
             @RequestParam Integer adminId) {
 
         LeadAssignmentDTO result = assignmentService.reassignLead(leadId, newAssignedTo, adminId);
@@ -40,7 +39,7 @@ public class LeadAssignmentController {
     
     @GetMapping("/history/{leadId}")
     public ResponseEntity<ResponseWrapper<List<LeadAssignmentHistoryDTO>>> viewAssignmentHistory(
-            @PathVariable Long leadId) {
+            @PathVariable Integer leadId) {
 
         List<LeadAssignmentHistoryDTO> history = assignmentService.getAssignmentHistory(leadId);
         return ResponseEntity.ok(ResponseWrapper.success(history));
@@ -48,12 +47,14 @@ public class LeadAssignmentController {
 
     @PutMapping("/soft-delete/{assignmentId}")
     public ResponseEntity<String> softDeleteAssignmentRecord(
-            @PathVariable Long assignmentId,
+            @PathVariable Integer assignmentId,
             @RequestParam Integer adminUserId) {
 
         assignmentService.softDeleteAssignment(assignmentId, adminUserId);
         return ResponseEntity.ok("Assignment record marked as deleted.");
     }
+    
+    
 
 
 	
