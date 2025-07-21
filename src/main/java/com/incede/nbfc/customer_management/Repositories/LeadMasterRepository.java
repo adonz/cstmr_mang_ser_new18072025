@@ -33,10 +33,8 @@ public interface LeadMasterRepository extends JpaRepository<LeadMasterModel, Int
 	   @Query("SELECT COUNT(l) FROM LeadMasterModel l " +
 	           "WHERE EXTRACT(YEAR FROM l.createdAt) = :year")
       Integer countByCreationYear(@Param("year") int year);
-
  
-
-
+	boolean existsByLeadIdAndIsDeleteFalse(Integer leadId);
  
 	
  
