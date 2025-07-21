@@ -17,6 +17,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer>{
 	List<Customer> findAllByTenantIdAndIsDeleteFalse(Integer tenantId);
 
 	boolean existsByCustomerIdAndIsDeleteFalse(Integer customerId);
+ 
+	Customer findByCustomerIdAndIsDeleteFalse(Integer customerId);
 
 
 }
