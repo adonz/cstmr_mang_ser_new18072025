@@ -1,6 +1,11 @@
 package com.incede.nbfc.customer_management.Repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import com.incede.nbfc.customer_management.Models.LeadMasterModel;
@@ -24,6 +29,15 @@ public interface LeadMasterRepository extends JpaRepository<LeadMasterModel, Int
 	Page<LeadMasterModel> findByIsDeleteFalse(Pageable pageble);
 
 	LeadMasterModel findByLeadCodeAndIsDeleteFalse(String ver_leadCode);
+
+	   @Query("SELECT COUNT(l) FROM LeadMasterModel l " +
+	           "WHERE EXTRACT(YEAR FROM l.createdAt) = :year")
+      Integer countByCreationYear(@Param("year") int year);
+
+ 
+
+
+ 
 	
  
 
