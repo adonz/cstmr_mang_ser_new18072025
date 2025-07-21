@@ -3,16 +3,24 @@ package com.incede.nbfc.customer_management.Models;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.incede.nbfc.customer_management.BaseEntity.BaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "lead_assignment")
-public class LeadAssignment {
+public class LeadAssignment extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +39,5 @@ public class LeadAssignment {
     @Column(name = "identity_guid", nullable = false, unique = true)
     private UUID identityGuid;
 
-    // Getters and setters or Lombok @Data can be added
 }
 
