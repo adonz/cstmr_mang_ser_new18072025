@@ -4,12 +4,12 @@ package com.incede.nbfc.customer_management.Models;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
 
 import com.incede.nbfc.customer_management.BaseEntity.BaseEntity;
 
 @Entity
-@Table(name = "customer_freeze_actions", schema = "customers")
+@Table(name = "customer_freeze_info", schema = "customers")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
