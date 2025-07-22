@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.incede.nbfc.customer_management.DTOs.CustomerRoleAssignmentDTO;
 import com.incede.nbfc.customer_management.Exceptions.DataNotFoundException.DataNotFoundException;
 import com.incede.nbfc.customer_management.FeignClients.UserClient;
+import com.incede.nbfc.customer_management.FeignClientsModels.RoleDTO;
 import com.incede.nbfc.customer_management.Models.CustomerRoleAssignment;
 import com.incede.nbfc.customer_management.Repositories.CustomerRepository;
 import com.incede.nbfc.customer_management.Repositories.CustomerRoleAssignmentRepository;
@@ -38,12 +39,13 @@ public class CustomerRoleAssignmentService {
             throw new DataNotFoundException("Invalid Customer ID.");
         }
 
-        ResponseWrapper<Boolean> roleValidation = roleClient.getRoleById(dto.getRoleId());
-        if (roleValidation == null || Boolean.FALSE.equals(roleValidation.getData())) {
+        ResponseWrapper<RoleDTO> roleResponse = roleClient.getRoleById(dto.getRoleId());
+        RoleDTO roleDto = (roleResponse != null) ? roleResponse.getData() : null;
+
+        if (roleDto == null || Boolean.FALSE.equals(roleDto.getIsActive())) {
             throw new DataNotFoundException("Invalid Role ID or role is inactive.");
         }
 
-        // 3️⃣ Prepare Entity
         CustomerRoleAssignment entity = new CustomerRoleAssignment();
         entity.setCustomerId(dto.getCustomerId());
         entity.setRoleId(dto.getRoleId());
@@ -65,7 +67,7 @@ public class CustomerRoleAssignmentService {
     }
     
     public List<CustomerRoleAssignmentDTO> getActiveRolesByCustomerId(Integer customerId) {
-        List<CustomerRoleAssignment> roles = roleAssignmentRepository.findActiveRolesByCustomer(customerId);
+        List<CustomerRoleAssignment> roles = roleAssignmentRepository.findByCustomerId(customerId);
 
         return roles.stream()
             .map(this::toDTO)

@@ -16,7 +16,6 @@ import feign.Param;
 @Repository
 public interface CustomerRoleAssignmentRepository extends JpaRepository<CustomerRoleAssignment, Integer>{
 
-	CustomerRoleAssignment save(CustomerRoleAssignment entity);
 
 	@Query("""
 		    SELECT r FROM CustomerRoleAssignment r
@@ -35,6 +34,8 @@ public interface CustomerRoleAssignmentRepository extends JpaRepository<Customer
 		       "AND r.isActive = true " +
 		       "AND r.isDelete = false")
 		List<CustomerRoleAssignment> findExpiredActiveAssignments(@Param("currentDate") Date currentDate);
+
+	List<CustomerRoleAssignment> findByCustomerId(Integer customerId);
 
 
 

@@ -25,7 +25,7 @@ import com.incede.nbfc.customer_management.Services.CustomerAdditionalDetailsSer
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/v1/customers/additional-details")
+@RequestMapping("/v1/customermanagement/customer-additional-details")
 public class CustomerAdditionalDetailsController {
 
     private final CustomerAdditionalDetailsService customerAdditionalDetailsService;
