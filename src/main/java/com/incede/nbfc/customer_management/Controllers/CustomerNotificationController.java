@@ -16,7 +16,7 @@ import com.incede.nbfc.customer_management.Response.ResponseWrapper;
 import com.incede.nbfc.customer_management.Services.CustomerNotificationService;
 
 @RestController
-@RequestMapping("/v1/notifications")
+@RequestMapping("/v1/customermanagement/customer-notifications")
 public class CustomerNotificationController {
 
     @Autowired

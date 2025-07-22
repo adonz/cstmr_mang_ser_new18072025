@@ -34,7 +34,7 @@ import jakarta.validation.Valid;
 
 @CrossOrigin(origins = "${cors.allowed-origin}")
 @RestController
-@RequestMapping("/v1/customerKyc")
+@RequestMapping("/v1/customermanagement/customer-KYC")
 public class CustomerKYCController {
 
 	private final CustomerKYCService customerKYCService;

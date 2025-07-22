@@ -23,7 +23,7 @@ import com.incede.nbfc.customer_management.Services.NomineeDetailsService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/v1/nominees")
+@RequestMapping("/v1/customermanagement/customer-nominees-details")
 public class NomineeDetailsController {
 
     @Autowired
