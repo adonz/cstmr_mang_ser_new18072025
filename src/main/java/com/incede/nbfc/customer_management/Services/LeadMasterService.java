@@ -34,7 +34,7 @@ public class LeadMasterService {
  	        System.out.println("createdby ---------"+ver_createdBy);
 	        Integer ver_tenantId = validateField(leadDto.getTenantId(), "tenant Id");
 	        System.out.println("tenentid"+ver_tenantId);
-	        String ver_leadCode = generateLeadCode();
+	        String ver_leadCode = generateLeadCode(ver_tenantId);
 	        String ver_name = validateField(leadDto.getFullName(), "fullname");
 	        Integer ver_sourceId = validateField(leadDto.getSourceId(), "source id");
 	        Integer ver_stageId = validateField(leadDto.getStageId(), "stage id");
@@ -108,7 +108,7 @@ public class LeadMasterService {
 			existigLaedMaster.setInterestedProductId(updateLeadMasterDto.getInterestedProductId());
 			existigLaedMaster.setStageId(updateLeadMasterDto.getStageId());
 			existigLaedMaster.setStatusId(updateLeadMasterDto.getStatusId());
-			existigLaedMaster.setCreatedAt(LocalDateTime.now());
+			existigLaedMaster.setUpdatedAt(LocalDateTime.now());
 			existigLaedMaster.setUpdatedBy(Updated_by);
 			 LeadMasterModel updatedData = leadRepository.save(existigLaedMaster);
 			 
@@ -186,6 +186,7 @@ public class LeadMasterService {
 	
 	private LeadMasterDto convertToDto(LeadMasterModel leadModel) {
 	    LeadMasterDto leadDto = new LeadMasterDto();
+	    leadDto.setLeadId(leadModel.getLeadId());
 	    leadDto.setTenantId(leadModel.getTenantId());
 	    leadDto.setLeadCode(leadModel.getLeadCode());
 	    leadDto.setFullName(leadModel.getFullName());
@@ -216,24 +217,20 @@ public class LeadMasterService {
 	
 	
 	
-	private int currentYear = Year.now().getValue();
-	private int sequenceCounter = 1;
-
-	public synchronized String generateLeadCode() {
+	public String generateLeadCode(Integer tenantId) {
 	    int year = Year.now().getValue();
-	    
- 	    if (year != currentYear) {
-	        currentYear = year;
-	        sequenceCounter = 1;
-	    }
-	    
-	    String prefix = "LD-" + year + "-";
-	    String sequence = String.format("%04d", sequenceCounter++);
-	    
-	    String leadCode = prefix + sequence;
-	    
-	    return leadCode;
+	    System.out.println("year"+year);
+	    String prefix = "LD-" + year+ "-";
+
+ 	    Integer count = leadRepository.countByCreationYear(year);
+ 	    
+ 	   Integer sequenceNumber = (count == null) ? 1 : count + 1;
+ 	    
+  	    String sequence = String.format("%04d", sequenceNumber);
+	    return prefix + sequence;
 	}
+	
+	
 
 	private boolean validateEmail(String email) {
 	    if (email == null || email.trim().isEmpty()) {
@@ -244,8 +241,12 @@ public class LeadMasterService {
 				throw new BusinessException("The Email id already exist in the system and are associated with another lead");
 			}
 
-	    String regex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-	    return email.trim().matches(regex);
+		    String regex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$";
+		    if (!email.trim().matches(regex)) {
+		        throw new BusinessException("Invalid email format");
+		    }
+		    
+		    return true;
 	}
 	
 	
@@ -258,9 +259,12 @@ public class LeadMasterService {
 				throw new BusinessException("The contact number already exist in the system and are associated with another lead");
 			}
 
-	    String regex = "^(\\+91[-\\s]?)?(0)?([6-9][0-9]{9}|[1-9][0-9]{1,4}[-\\s]?[0-9]{6,8})$";
-
-	    return ver_PhoneNumber.trim().matches(regex);
+		    String regex = "^[6-9]\\d{9}$";  
+		    if (!ver_PhoneNumber.trim().matches(regex)) {
+		        throw new BusinessException("Invalid mobile number format");
+		    }
+		    
+		    return true;
 	}
 
 

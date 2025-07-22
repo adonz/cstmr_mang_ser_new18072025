@@ -2,6 +2,7 @@ package com.incede.nbfc.customer_management.Controllers;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,10 +40,10 @@ public class LeadMasterController {
 		return ResponseEntity.ok(ResponseWrapper.success(leadId,"Customer Lead master Updated successfully"));
 	}
 	
-	@GetMapping("/lead_master/get/leadId/")
+	@GetMapping("/lead_master/get/{leadMasterId}")
 	ResponseEntity<ResponseWrapper<LeadMasterDto>> getCustomerLeadMaterDetailsById(@PathVariable Integer leadMasterId){
 		 LeadMasterDto leadId = leadService.getLeadMasterByLeadId(leadMasterId);
-		return ResponseEntity.ok(ResponseWrapper.success(leadId,"Customer Lead master Updated successfully"));
+		return ResponseEntity.ok(ResponseWrapper.success(leadId,"Customer Lead master details fetched successfully"));
 	}
 	
 	@GetMapping("/lead_master/get/Active-Accounts")
@@ -53,9 +54,9 @@ public class LeadMasterController {
 				return ResponseEntity.ok(ResponseWrapper.success(leadMasterDetails));
 	}
 	
-	@PostMapping("/lead_master/delete")
+	@DeleteMapping("/lead_master/delete")
 	public ResponseEntity<ResponseWrapper< String>> deleteLeadmasterDetailsByLeadId(@RequestBody LeadMasterDto  leadDto){
 		 String resultDto = leadService.softDeleteLeadMaster(leadDto);
-	    return ResponseEntity.ok(ResponseWrapper.success(resultDto));
+	    return ResponseEntity.ok(ResponseWrapper.success(resultDto,"deleted"));
 	}
 }

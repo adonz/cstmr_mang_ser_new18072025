@@ -33,8 +33,8 @@ public class CustomerAddressesService {
 			CustomerAddressesModel addressModel = new CustomerAddressesModel();
 			CustomerAddressesModel createdData = createdCustomerAddressDetails(addressModel,customerDto);
 			String ver_addressType = createdData.getAddressType();
-			if(!ver_addressType.equalsIgnoreCase("Present") && !ver_addressType.equalsIgnoreCase("Permanant")) {
-				throw new BusinessException( "Address tye should be in 'Permanant' or 'Present'");
+			if(!ver_addressType.equalsIgnoreCase("Present") && !ver_addressType.equalsIgnoreCase("Permanent")) {
+				throw new BusinessException( "Address tye should be in 'Permanent' or 'Present'");
 			}
 			String ver_pincode =  createdData.getPincode();
 			if(!ValidatePincode(ver_pincode)) {
