@@ -14,7 +14,7 @@ import com.incede.nbfc.customer_management.Response.ResponseWrapper;
 @FeignClient(name = "UserManagementService", url = "${user.service.url}")
 public interface UserClient {
 
-		@GetMapping("/v1/user-roles/{id}")
+		@GetMapping("/v1/usermanagement/user-roles/{id}")
 		ResponseWrapper<Boolean> getRoleById(@PathVariable Integer id);
 		
 		@GetMapping("/v1/usermanagement/users/validate/{userId}")
