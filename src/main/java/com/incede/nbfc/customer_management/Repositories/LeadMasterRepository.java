@@ -4,8 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import com.incede.nbfc.customer_management.Models.LeadMasterModel;
@@ -30,8 +28,9 @@ public interface LeadMasterRepository extends JpaRepository<LeadMasterModel, Int
 
 	LeadMasterModel findByLeadCodeAndIsDeleteFalse(String ver_leadCode);
 
+	// here year is extracted from created at , want to change it, from lead code it should extract year 
 	   @Query("SELECT COUNT(l) FROM LeadMasterModel l " +
-	           "WHERE EXTRACT(YEAR FROM l.createdAt) = :year")
+	           "WHERE EXTRACT(YEAR FROM l.createdAt) = :year")  
       Integer countByCreationYear(@Param("year") int year);
  
 	boolean existsByLeadIdAndIsDeleteFalse(Integer leadId);
