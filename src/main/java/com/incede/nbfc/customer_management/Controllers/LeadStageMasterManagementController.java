@@ -1,7 +1,6 @@
 package com.incede.nbfc.customer_management.Controllers;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,7 +29,7 @@ public class LeadStageMasterManagementController {
 		this.leadStageService= leadStageService;
 	}
 
-    @PostMapping("/")
+    @PostMapping("/lead-master-stage-management/")
     public ResponseEntity<ResponseWrapper<Integer>> createLeasStageMaster(
             @Valid @RequestBody LeadStageMasterManagementDto leadStageDto) {
          Integer saved = leadStageService.addLeadStageMaster(leadStageDto);
@@ -38,21 +37,21 @@ public class LeadStageMasterManagementController {
                 .body(ResponseWrapper.created(saved, "leadStage details recorded successfully."));
     }
     
-    @GetMapping("/lead-master-management/{leadStageId}")
-    public ResponseEntity<ResponseWrapper<List<LeadStageMasterManagementDto>>> getByLeadStageId(
+    @GetMapping("/lead-master-stage-management/{leadStageId}")
+    public ResponseEntity<ResponseWrapper<LeadStageMasterManagementDto>> getByLeadStageId(
             @PathVariable Integer leadStageId) {
-        List<LeadStageMasterManagementDto> list = leadStageService.getByLeadStageMatserId(leadStageId);
-        return ResponseEntity.ok(ResponseWrapper.success(list, "Active lead Stage Masters fetched."));
+        LeadStageMasterManagementDto data = leadStageService.getByLeadStageMatserId(leadStageId);
+        return ResponseEntity.ok(ResponseWrapper.success(data, "Active lead Stage Masters fetched."));
     }
     
-    @PutMapping("/lead-master-management/update/")
+    @PutMapping("/lead-master-stage-management/update/")
     public ResponseEntity<ResponseWrapper< Integer>> updateByLeadStageId(
             @RequestBody LeadStageMasterManagementDto leadStageDto) {
          Integer updatedDtat = leadStageService.updateByLeadStageMatserId(leadStageDto);
         return ResponseEntity.ok(ResponseWrapper.success(updatedDtat, "lead Stage Masters updated."));
     }
     
-    @DeleteMapping("/lead-master-management/soft-delete/{leadStageId}")
+    @DeleteMapping("/lead-master-stage-management/soft-delete/{leadStageId}")
     public ResponseEntity<ResponseWrapper<String>> softDeleteLeasStageMaster(
             @PathVariable Integer leadStageId,
             @RequestParam Integer  updatedBy) {
@@ -60,6 +59,14 @@ public class LeadStageMasterManagementController {
     	leadStageService.softDeleteLeadStageMaster(leadStageId, updatedBy);
         return ResponseEntity.ok(ResponseWrapper.success("Leas Stage Master soft-deleted successfully."));
     }
+    
+	@GetMapping("/lead-master-stage-management/active-accounts")
+	public ResponseEntity<ResponseWrapper< Page<LeadStageMasterManagementDto>>> getAllActiveCustomerLeadStageMaterDetailsById(
+			@RequestParam(defaultValue = "0") int page ,
+			@RequestParam(defaultValue = "10") int size){
+				Page<LeadStageMasterManagementDto>  leadMasterDetails = leadStageService.getAllLeadStageMasterDetails(page, size);
+				return ResponseEntity.ok(ResponseWrapper.success(leadMasterDetails));
+	}
     
     
     

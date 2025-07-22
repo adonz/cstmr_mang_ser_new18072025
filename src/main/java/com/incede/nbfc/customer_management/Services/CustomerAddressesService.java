@@ -117,6 +117,7 @@ public class CustomerAddressesService {
 				throw new BusinessException("No customer details found !!");
 			}
 			AddressDetails.setIsDelete(true);
+			AddressDetails.setUpdatedBy(customerId);
 			return addressId +"customer details deleted successfully";
 		}
 		catch(BusinessException e) {
