@@ -13,7 +13,9 @@ import feign.Param;
 
 public interface NomineeDetailsRepository extends JpaRepository<NomineeDetails, Integer>{
 
-	BigDecimal getTotalShareByCustomerId(Integer customerId);
+	@Query("SELECT SUM(n.percentageShare) FROM NomineeDetails n WHERE n.customerId = :customerId AND n.isDelete = false")
+	BigDecimal getTotalShareByCustomerId(@Param("customerId") Integer customerId);
+
 
 	Optional<NomineeDetails> findByNomineeIdAndIsDeleteFalse(Integer nomineeId);
 

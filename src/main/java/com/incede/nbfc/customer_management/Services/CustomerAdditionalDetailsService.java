@@ -68,6 +68,7 @@ public class CustomerAdditionalDetailsService {
             existing.setPepCategory(dto.getPepCategory());
             existing.setPepRelationshipType(dto.getPepRelationshipType());
             existing.setPepVerificationSource(dto.getPepVerificationSource());
+            existing.setUpdatedBy(dto.getUpdatedBy());
             customerAdditionalDetailsRepository.save(existing);
         } catch (Exception e) {
             throw new BusinessException("Unable to update additional details.");

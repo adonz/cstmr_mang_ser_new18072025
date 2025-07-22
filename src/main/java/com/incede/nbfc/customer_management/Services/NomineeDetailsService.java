@@ -47,18 +47,24 @@ public class NomineeDetailsService {
             throw new BusinessException("Guardian name is required for minor nominee.");
         }
 
+        // 🛡️ Safeguard against null from SUM query
         BigDecimal existingShare = nomineeDetailsRepository.getTotalShareByCustomerId(dto.getCustomerId());
-        BigDecimal proposedTotal = existingShare.add(dto.getPercentageShare() != null ? dto.getPercentageShare() : BigDecimal.ZERO);
+        if (existingShare == null) {
+            existingShare = BigDecimal.ZERO;
+        }
+
+        BigDecimal nomineeShare = dto.getPercentageShare() != null ? dto.getPercentageShare() : BigDecimal.ZERO;
+        BigDecimal proposedTotal = existingShare.add(nomineeShare);
         if (proposedTotal.compareTo(new BigDecimal("100.00")) > 0) {
             throw new ConflictException("Total nominee share cannot exceed 100%.");
         }
 
         if (Boolean.TRUE.equals(dto.getIsSameAddress())) {
-        	CustomerAddressesModel addr = customerAddressRepository.findByCustomerIdAndAddressTypeAndIsDeleteFalse(
-                dto.getCustomerId(), "Permanent")
+            CustomerAddressesModel addr = customerAddressRepository.findByCustomerIdAndAddressTypeAndIsDeleteFalse(
+                dto.getCustomerId(), "Permanant")
                 .orElseThrow(() -> new DataNotFoundException("Customer address not found for inheritance."));
 
-            dto.setHouseNumber(addr.getDoorNumber());;
+            dto.setHouseNumber(addr.getDoorNumber());
             dto.setAddressLine1(addr.getAddressLineOne());
             dto.setAddressLine2(addr.getAddressLineTwo());
             dto.setLandmark(addr.getLandMark());
@@ -75,7 +81,6 @@ public class NomineeDetailsService {
         NomineeDetails saved = nomineeDetailsRepository.save(entity);
         return toDTO(saved);
     }
-
     private NomineeDetails toEntity(NomineeDetailsDTO dto) {
         NomineeDetails entity = new NomineeDetails();
         entity.setCustomerId(dto.getCustomerId());

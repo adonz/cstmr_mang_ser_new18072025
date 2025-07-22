@@ -47,7 +47,7 @@ upload:
 
 masterdata:
   service:
-    url: http://192.168.1.42:8088
+    url: http://192.168.1.83:8088
 
 organisation:
   service:
@@ -55,7 +55,7 @@ organisation:
 
 user:
   service:
-    url: http://192.168.1.42:8082
+    url: http://192.168.1.83:8082
 
 cors:
   allowed-origin: "*"
