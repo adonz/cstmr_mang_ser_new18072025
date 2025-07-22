@@ -20,7 +20,7 @@ import com.incede.nbfc.customer_management.Services.LeadCustomerMappingService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @RestController
-@RequestMapping("/v1/lead-customer-mapping")
+@RequestMapping("/v1/customermanagement/customer-lead-mapping")
 public class LeadCustomerMappingController {
 
     @Autowired
@@ -28,6 +28,10 @@ public class LeadCustomerMappingController {
 
     @PostMapping("/create")
     public ResponseEntity<ResponseWrapper<LeadCustomerMappingDTO>> create(@RequestBody LeadCustomerMappingDTO dto) {
+        System.out.println("Received DTO:");
+        System.out.println("leadId = " + dto.getLeadId());
+        System.out.println("customerId = " + dto.getCustomerId());
+        System.out.println("createdBy = " + dto.getCreatedBy());
         return ResponseEntity.ok(ResponseWrapper.success(service.create(dto), "Mapping created"));
     }
 

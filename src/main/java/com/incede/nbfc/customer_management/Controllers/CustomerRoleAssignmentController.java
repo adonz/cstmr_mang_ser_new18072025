@@ -21,7 +21,7 @@ import com.incede.nbfc.customer_management.Services.CustomerRoleAssignmentServic
 
 
 @RestController
-@RequestMapping("/v1/role-assignments")
+@RequestMapping("/v1/customermanagement/customer-role-assignments")
 public class CustomerRoleAssignmentController {
 
     @Autowired

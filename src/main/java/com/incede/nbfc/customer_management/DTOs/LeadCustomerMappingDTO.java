@@ -9,8 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class LeadCustomerMappingDTO {
     private Integer mappingId;
     private Integer leadId;
@@ -23,3 +23,5 @@ public class LeadCustomerMappingDTO {
     private Boolean isDelete;
     private UUID identity;
 }
+
+

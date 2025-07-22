@@ -26,6 +26,7 @@ public class LeadCustomerMappingService {
 
     public LeadCustomerMappingDTO create(LeadCustomerMappingDTO dto) {
         if (dto.getLeadId() == null || dto.getCustomerId() == null || dto.getCreatedBy() == null) {
+        	System.out.println(dto.getCreatedBy());
             throw new BadRequestException("Lead ID, Customer ID, and Created By are mandatory.");
         }
 
@@ -42,7 +43,6 @@ public class LeadCustomerMappingService {
 
         LeadCustomerMapping entity = toEntity(dto);
         entity.setConversionDate(new Date());
-        entity.setIsDelete(false);
         LeadCustomerMapping saved = repository.save(entity);
         return toDTO(saved);
     }
