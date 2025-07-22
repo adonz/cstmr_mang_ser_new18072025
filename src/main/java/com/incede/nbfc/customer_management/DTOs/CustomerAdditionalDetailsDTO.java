@@ -52,6 +52,7 @@ public class CustomerAdditionalDetailsDTO {
     private String nationality;
     private String occupationName;
     private String designationName;
+    private Integer updatedBy;
     
     public CustomerAdditionalDetailsDTO(
     	    Integer customerId,

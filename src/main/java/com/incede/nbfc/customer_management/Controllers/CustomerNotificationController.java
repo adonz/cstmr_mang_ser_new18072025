@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.incede.nbfc.customer_management.DTOs.CustomerNotificationDTO;
+import com.incede.nbfc.customer_management.Response.ResponseWrapper;
 import com.incede.nbfc.customer_management.Services.CustomerNotificationService;
 
 @RestController
@@ -22,26 +23,26 @@ public class CustomerNotificationController {
     private CustomerNotificationService notificationService;
 
     @PostMapping("/record-consent")
-    public ResponseEntity<CustomerNotificationDTO> recordConsent(@RequestBody CustomerNotificationDTO dto) {
+    public ResponseEntity<ResponseWrapper<CustomerNotificationDTO>> recordConsent(@RequestBody CustomerNotificationDTO dto) {
         CustomerNotificationDTO savedDto = notificationService.recordConsent(dto);
-        return ResponseEntity.ok(savedDto);
+        return ResponseEntity.ok(ResponseWrapper.created(savedDto, "Notification consent recorded successfully"));
     }
-    
+
     @PutMapping("/update-consent/{customerId}")
-    public ResponseEntity<String> updateConsent(
+    public ResponseEntity<ResponseWrapper<Void>> updateConsent(
             @PathVariable Integer customerId,
             @RequestBody CustomerNotificationDTO dto) {
+
         notificationService.updateConsent(customerId, dto);
-        return ResponseEntity.ok("Preferences updated successfully");
+        return ResponseEntity.ok(ResponseWrapper.success(null, "Notification preferences updated successfully"));
     }
-    
+
     @DeleteMapping("/soft-delete/{customerId}")
-    public ResponseEntity<String> softDeleteConsent(
+    public ResponseEntity<ResponseWrapper<Void>> softDeleteConsent(
             @PathVariable Integer customerId,
             @RequestParam Integer userId) {
+
         notificationService.softDeleteConsent(customerId, userId);
-        return ResponseEntity.ok("Notification preferences soft-deleted successfully.");
+        return ResponseEntity.ok(ResponseWrapper.success(null, "Notification preferences soft-deleted successfully"));
     }
-
-
 }
