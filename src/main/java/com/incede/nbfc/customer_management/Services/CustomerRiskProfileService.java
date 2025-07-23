@@ -3,6 +3,7 @@ package com.incede.nbfc.customer_management.Services;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -30,7 +31,6 @@ public class CustomerRiskProfileService {
 
             CustomerRiskProfile entity = toEntity(dto);
             entity.setIdentity(UUID.randomUUID());
-            entity.setIsDelete(false);
             entity.setCreatedBy(dto.getCreatedBy());
 
             if (dto.getAssessmentDate() == null) {
@@ -47,24 +47,24 @@ public class CustomerRiskProfileService {
     }
 
     public CustomerRiskProfileDTO update(Integer id, CustomerRiskProfileDTO dto) {
-        CustomerRiskProfile existing = repository.findById(id)
-                .orElseThrow(() -> new DataNotFoundException("Risk profile not found"));
+        CustomerRiskProfile entity = repository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("Risk profile not found."));
 
         validate(dto);
 
-        existing.setRiskScore(dto.getRiskScore());
-        existing.setRiskCategory(dto.getRiskCategory());
-        existing.setRiskReason(dto.getRiskReason());
-        existing.setAssessmentDate(dto.getAssessmentDate() != null ? dto.getAssessmentDate() : new Date());
-        existing.setUpdatedBy(dto.getUpdatedBy());
+        entity.setRiskScore(dto.getRiskScore());
+        entity.setRiskCategory(dto.getRiskCategory());
+        entity.setRiskReason(dto.getRiskReason());
+        entity.setAssessmentDate(dto.getAssessmentDate() != null ? dto.getAssessmentDate() : new Date());
+        entity.setUpdatedBy(dto.getUpdatedBy());
 
-        CustomerRiskProfile updated = repository.save(existing);
+        CustomerRiskProfile updated = repository.save(entity);
         return toDTO(updated);
     }
 
     public void softDelete(Integer id, Integer userId) {
         CustomerRiskProfile entity = repository.findById(id)
-                .orElseThrow(() -> new DataNotFoundException("Risk profile not found"));
+                .orElseThrow(() -> new DataNotFoundException("Risk profile not found."));
 
         entity.setIsDelete(true);
         entity.setUpdatedBy(userId);
@@ -73,25 +73,25 @@ public class CustomerRiskProfileService {
     }
 
     public List<CustomerRiskProfileDTO> getAll() {
-        try {
-            return repository.findByIsDeleteFalse()
-                    .stream()
-                    .map(this::toDTO)
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new BusinessException("Error fetching risk profiles.");
-        }
+        return repository.findByIsDeleteFalse()
+                .stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
     private void validate(CustomerRiskProfileDTO dto) {
-        if (dto.getRiskScore() == null || dto.getRiskScore().compareTo(BigDecimal.ZERO) < 0 || dto.getRiskScore().compareTo(new BigDecimal("100.00")) > 0) {
+        if (dto.getRiskScore() == null || 
+            dto.getRiskScore().compareTo(BigDecimal.ZERO) < 0 || 
+            dto.getRiskScore().compareTo(new BigDecimal("100.00")) > 0) {
             throw new BadRequestException("Risk score must be between 0.00 and 100.00");
         }
+
         if (dto.getRiskCategory() == null || dto.getRiskCategory() < 1 || dto.getRiskCategory() > 4) {
             throw new BadRequestException("Risk category must be between 1 and 4");
         }
-        if (dto.getCustomerId() == null || dto.getAssessmentTypeId() == null) {
-            throw new BadRequestException("Customer ID and assessment type ID are required");
+
+        if (dto.getCustomerId() == null || dto.getAssessmentTypeId() == null || dto.getCreatedBy() == null) {
+            throw new BadRequestException("Customer ID, Assessment Type, and Created By are mandatory.");
         }
     }
 

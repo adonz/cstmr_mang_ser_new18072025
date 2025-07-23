@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomerRiskProfile extends BaseEntity {
+public class CustomerRiskProfile extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,3 +50,4 @@ public class CustomerRiskProfile extends BaseEntity {
     private UUID identity;
 
 }
+
