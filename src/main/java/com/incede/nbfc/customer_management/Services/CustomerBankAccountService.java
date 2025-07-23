@@ -100,7 +100,8 @@ public class CustomerBankAccountService {
 			accountModel.setIfscCode( accountDto.getIfscCode() !=null?accountDto.getIfscCode():accountModel.getIfscCode());
 			accountModel.setUpiId(accountDto.getUpiId()!=null?accountDto.getUpiId():accountModel.getUpiId());
 			accountModel.setIsActive(accountDto.getIsActive()!= null ? accountDto.getIsActive():accountModel.getIsActive());
-			accountModel.setIsPrimary(ValidateIsPrimary(accountModel.getCustomerId()));
+			accountModel.setIsPrimary(accountDto.getIsPrimary() == true ? ValidateIsPrimary(accountModel.getCustomerId()) :accountDto.getIsPrimary());
+			 
 			CustomerBankAccountModel existingentityObject =customerAccountRepository.save(accountModel);
 			
 			return convertToDto(existingentityObject).getBankAccountId();

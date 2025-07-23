@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -65,7 +66,7 @@ public class CustomerBankAccountController {
 	}
 	
 	
-	@PostMapping("/bank-account/update")
+	@PutMapping("/bank-account/update")
 	public ResponseEntity<ResponseWrapper<Integer>> updateCustomerAccountDetailsByAccountId(@RequestBody CustomerBankAccountDto bankAccountDto){
 		  Integer resultDto = customerBankAccountService.updateBankAccountDeatils(bankAccountDto);
 	    return ResponseEntity.ok(ResponseWrapper.success(resultDto, "updated successfully"));

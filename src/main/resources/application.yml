@@ -10,7 +10,7 @@ spring:
 
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/customer_management_service
+    url: jdbc:postgresql://localhost:5432/customer_management_services
     username: postgres
     password: root
     driver-class-name: org.postgresql.Driver
