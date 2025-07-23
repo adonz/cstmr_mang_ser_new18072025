@@ -1,5 +1,7 @@
 package com.incede.nbfc.customer_management.DTOs;
 
+import java.time.LocalDateTime;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -23,4 +25,14 @@ public class ProductAndServicesDto {
  	private String description;
 	
  	private Boolean isActive;
+ 	
+ 	private Boolean isDelete;
+ 	
+ 	private Integer createdBy;
+ 	
+ 	private Integer updatedBy;
+ 	
+ 	private LocalDateTime createdAt;
+ 	
+ 	private LocalDateTime updatedAt;
 }
