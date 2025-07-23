@@ -24,32 +24,38 @@ public class LeadSourceMasterService {
     }
 
     public LeadSourceMasterDto create(LeadSourceMasterDto dto) {
-        Integer tenantId = tenantConfig.getTenantId();
+        if (dto.getSourceName() == null || dto.getSourceName().isBlank()) {
+            throw new IllegalArgumentException("sourceName is required");
+        }
 
         if (dto.getCreatedBy() == null) {
-            throw new BusinessException("createdBy is required.");
+            throw new IllegalArgumentException("createdBy is required");
         }
 
-        if (dto.getSourceName() == null || dto.getSourceName().trim().isEmpty()) {
-            throw new BusinessException("sourceName is required.");
-        }
-
+        Integer tenantId = tenantConfig.getTenantId();
         String trimmedName = dto.getSourceName().trim();
 
-        if (leadSourceMasterRepository.existsByTenantIdAndSourceNameIgnoreCaseAndIsDeleteFalse(tenantId, trimmedName)) {
-            throw new BusinessException("Lead Source name already exists for this tenant.");
+        boolean exists = leadSourceMasterRepository
+            .existsByTenantIdAndSourceNameIgnoreCaseAndIsDeleteFalse(tenantId, trimmedName);
+
+        if (exists) {
+            throw new IllegalArgumentException("Lead Source name already exists for this tenant");
         }
 
-        LeadSourceMaster entity = convertToEntity(dto);
+        LeadSourceMaster entity = new LeadSourceMaster();
         entity.setTenantId(tenantId);
         entity.setSourceName(trimmedName);
-        entity.setIsDelete(false);
-        entity.setCreatedAt(LocalDateTime.now());
         entity.setIdentity(UUID.randomUUID());
+        entity.setCreatedBy(dto.getCreatedBy());
+        entity.setCreatedAt(LocalDateTime.now());
+        entity.setUpdatedAt(LocalDateTime.now());
+        entity.setIsDelete(false);
 
-        LeadSourceMaster saved = leadSourceMasterRepository.save(entity);
-        return convertToDto(saved);
+        entity = leadSourceMasterRepository.save(entity);
+        return convertToDto(entity);
     }
+
+
     
     
     public LeadSourceMasterDto updateSourceName(UUID identity, String newSourceName, Integer updatedBy) {
