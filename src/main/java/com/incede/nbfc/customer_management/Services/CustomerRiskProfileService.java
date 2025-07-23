@@ -27,6 +27,7 @@ public class CustomerRiskProfileService {
 
     public CustomerRiskProfileDTO create(CustomerRiskProfileDTO dto) {
         try {
+            // Let validation exceptions bubble up
             validate(dto);
 
             CustomerRiskProfile entity = toEntity(dto);
@@ -39,12 +40,18 @@ public class CustomerRiskProfileService {
 
             CustomerRiskProfile saved = repository.save(entity);
             return toDTO(saved);
+            
         } catch (DataIntegrityViolationException e) {
             throw new ConflictException("Duplicate or invalid risk profile record.");
+        
+        } catch (BadRequestException e) {
+            throw e; // ✅ Re-throw validation exceptions as-is
+        
         } catch (Exception e) {
             throw new BusinessException("Unable to create customer risk profile.");
         }
     }
+
 
     public CustomerRiskProfileDTO update(Integer id, CustomerRiskProfileDTO dto) {
         CustomerRiskProfile entity = repository.findById(id)

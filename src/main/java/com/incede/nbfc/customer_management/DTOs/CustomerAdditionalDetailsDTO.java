@@ -1,5 +1,7 @@
 package com.incede.nbfc.customer_management.DTOs;
 
+import java.math.BigDecimal;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
