@@ -35,7 +35,7 @@ public class LeadActivityTypeController {
     @PostMapping("/create")
     public ResponseEntity<ResponseWrapper<LeadActivityTypeDto>> create(@RequestBody LeadActivityTypeDto dto) {
         LeadActivityTypeDto createdDto = leadActivityTypeService.create(dto);
-        return ResponseEntity.ok(ResponseWrapper.success(createdDto, "Lead Activity Type created successfully"));
+        return ResponseEntity.ok(ResponseWrapper.created(createdDto, "Lead Activity Type created successfully"));
     }
 
     // Update
@@ -59,7 +59,7 @@ public class LeadActivityTypeController {
     ) {
     	leadActivityTypeService.softDelete(id, tenantId, userId);
         return ResponseEntity.ok(ResponseWrapper.success("Deleted successfully"));
-    }
+    } 
 
     // Get All Active
     @GetMapping("/all")

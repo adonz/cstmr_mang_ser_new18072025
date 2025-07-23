@@ -16,6 +16,6 @@ public interface LeadActivityTypeRepository extends JpaRepository<LeadActivityTy
 
     Optional<LeadActivityType> findByActivityTypeIdAndTenantIdAndIsDeleteFalse(Integer activityTypeId, Integer tenantId);
 
-    List<LeadActivityType> findByTenantIdAndIsDeleteFalseOrderByTypeNameAsc();
+    List<LeadActivityType> findByTenantIdAndIsDeleteFalseOrderByTypeNameAsc(Integer tenantId);
 
 }

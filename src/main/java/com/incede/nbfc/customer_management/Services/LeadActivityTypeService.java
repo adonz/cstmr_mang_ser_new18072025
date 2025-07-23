@@ -25,20 +25,20 @@ public LeadActivityTypeService(LeadActivityTypeRepository activityTypeRepository
 
 // User Story 1: Create
 public LeadActivityTypeDto create(LeadActivityTypeDto dto) {
-//    tenantConfig.validateTenant(dto.getTenantId());
-
     if (dto.getTypeName() == null || dto.getTypeName().isBlank()) {
         throw new IllegalArgumentException("type_name is required");
     }
 
+    Integer tenantId = tenantConfig.getTenantId(); // ✅ Get tenant from context/session
     String normalizedName = dto.getTypeName().trim().toUpperCase();
-    boolean exists = activityTypeRepository.existsByTenantIdAndTypeNameIgnoreCaseAndIsDeleteFalse(dto.getTenantId(), normalizedName);
+
+    boolean exists = activityTypeRepository.existsByTenantIdAndTypeNameIgnoreCaseAndIsDeleteFalse(tenantId, normalizedName);
     if (exists) {
         throw new IllegalArgumentException("Activity type name already exists for this tenant");
     }
 
     LeadActivityType entity = new LeadActivityType();
-    entity.setTenantId(tenantConfig.getTenantId());;
+    entity.setTenantId(tenantId); // ✅ Use only tenant from config
     entity.setTypeName(normalizedName);
     entity.setIdentity(UUID.randomUUID());
     entity.setCreatedBy(dto.getCreatedBy());
@@ -49,6 +49,7 @@ public LeadActivityTypeDto create(LeadActivityTypeDto dto) {
     entity = activityTypeRepository.save(entity);
     return mapToDto(entity);
 }
+
 
 // User Story 2: Update
 @Transactional
@@ -96,7 +97,7 @@ public void softDelete(Integer id, Integer tenantId, Integer userId) {
 public List<LeadActivityTypeDto> getAllActiveForTenant(Integer tenantId) {
 //    tenantConfig.validateTenant(tenantId);
 
-    return activityTypeRepository.findByTenantIdAndIsDeleteFalseOrderByTypeNameAsc()
+    return activityTypeRepository.findByTenantIdAndIsDeleteFalseOrderByTypeNameAsc(tenantId)
             .stream()
             .map(this::mapToDto)
             .collect(Collectors.toList());
