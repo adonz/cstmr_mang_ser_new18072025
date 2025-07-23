@@ -18,7 +18,7 @@ import com.incede.nbfc.customer_management.Services.CustomerAddressesService;
 
 
 @RestController
-@RequestMapping("v1/customer-addresses")
+@RequestMapping("")
 public class CustomerAddressesController {
 	
 	private final CustomerAddressesService customerAddressService;
