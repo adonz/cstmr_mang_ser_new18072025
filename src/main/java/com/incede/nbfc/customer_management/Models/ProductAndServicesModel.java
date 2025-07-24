@@ -1,7 +1,12 @@
 package com.incede.nbfc.customer_management.Models;
 
+import com.incede.nbfc.customer_management.BaseEntity.BaseEntity;
+import com.incede.nbfc.customer_management.Enums.ProductServicesTypes;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -11,7 +16,7 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name="product_services",schema="customers")
-public class ProductAndServicesModel {
+public class ProductAndServicesModel extends BaseEntity{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +33,8 @@ public class ProductAndServicesModel {
 	private String productServiceCode;
 	
 	@Column(name="ps_type", nullable=false)
-	private String productServiceType;
+	@Enumerated(EnumType.STRING)
+	private ProductServicesTypes productServiceType;
 	
 	@Column(name="description")
 	private String description;

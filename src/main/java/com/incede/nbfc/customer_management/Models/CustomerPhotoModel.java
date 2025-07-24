@@ -2,6 +2,8 @@ package com.incede.nbfc.customer_management.Models;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.Columns;
+
 import com.incede.nbfc.customer_management.BaseEntity.BaseEntity;
 
 import jakarta.persistence.Column;
@@ -25,8 +27,11 @@ public class CustomerPhotoModel extends BaseEntity{
 	@Column(name="customer_id")
 	private Integer customerId;
 	
-	@Column(name="photo_file_path", nullable=false)
-	private String photoFilePath;
+//	@Column(name="photo_file_path", nullable=false)
+//	private String photoFilePath;
+	
+	@Column(name ="photo_file_id", nullable =false)
+	private Integer photoFileId;
 	
 	@Column(name="latitude", nullable = false)
 	private Double latitude;

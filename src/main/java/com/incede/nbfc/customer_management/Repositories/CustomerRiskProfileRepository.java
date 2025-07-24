@@ -17,5 +17,9 @@ public interface CustomerRiskProfileRepository extends JpaRepository<CustomerRis
 
 	Optional<CustomerRiskProfile> findByIsDeleteFalse();
 
+	Optional<CustomerRiskProfile> findByCustomerIdAndAssessmentTypeIdAndIsDeleteFalse(Integer customerId,
+			Integer assessmentTypeId);
+
+
 }
 

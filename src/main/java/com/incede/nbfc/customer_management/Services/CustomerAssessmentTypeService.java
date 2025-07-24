@@ -33,10 +33,13 @@ public class CustomerAssessmentTypeService {
             return toDTO(saved);
         } catch (DataIntegrityViolationException e) {
             throw new ConflictException("Duplicate assessment type or constraint violation.");
+        } catch (BadRequestException e) {
+            throw e; // ✅ Let it bubble up
         } catch (Exception e) {
             throw new BusinessException("Unable to create assessment type.");
         }
     }
+
 
     public CustomerAssessmentTypeDTO update(Integer id, CustomerAssessmentTypeDTO dto) {
         CustomerAssessmentType existing = customerAssessmentTypeRepository.findById(id)
@@ -49,12 +52,13 @@ public class CustomerAssessmentTypeService {
             existing.setUpdatedBy(dto.getUpdatedBy());
             CustomerAssessmentType updated = customerAssessmentTypeRepository.save(existing);
             return toDTO(updated);
-        } catch (IllegalArgumentException e) {
-            throw new BadRequestException("Invalid input for assessment type update.");
+        } catch (BadRequestException e) {
+            throw e; // ✅ Preserve intended exception
         } catch (Exception e) {
             throw new BusinessException("Unable to update assessment type.");
         }
     }
+
 
     public void toggleStatus(Integer id) {
         CustomerAssessmentType entity = customerAssessmentTypeRepository.findById(id)

@@ -1,5 +1,9 @@
 package com.incede.nbfc.customer_management.DTOs;
 
+import java.time.LocalDateTime;
+
+import com.incede.nbfc.customer_management.Enums.ProductServicesTypes;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -19,8 +23,20 @@ public class ProductAndServicesDto {
 	
  	@NotNull(message="product service type (ps_type) should not be null")
  	private String productServiceType;
+ 	
+ 	//private ProductServicesTypes  ProductServicesTypes;
 	
  	private String description;
 	
  	private Boolean isActive;
+ 	
+ 	private Boolean isDelete;
+ 	
+ 	private Integer createdBy;
+ 	
+ 	private Integer updatedBy;
+ 	
+ 	private LocalDateTime createdAt;
+ 	
+ 	private LocalDateTime updatedAt;
 }

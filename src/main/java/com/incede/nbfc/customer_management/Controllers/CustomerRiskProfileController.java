@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,7 +18,6 @@ import com.incede.nbfc.customer_management.DTOs.CustomerRiskProfileDTO;
 import com.incede.nbfc.customer_management.Response.ResponseWrapper;
 import com.incede.nbfc.customer_management.Services.CustomerRiskProfileService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
 
 @RestController
@@ -28,26 +28,31 @@ public class CustomerRiskProfileController {
     private CustomerRiskProfileService service;
 
     @PostMapping("/create")
-    public ResponseEntity<ResponseWrapper<CustomerRiskProfileDTO>> create(@RequestBody @Valid CustomerRiskProfileDTO dto) {
+    public ResponseEntity<ResponseWrapper<CustomerRiskProfileDTO>> create(
+            @RequestBody @Valid CustomerRiskProfileDTO dto) {
         CustomerRiskProfileDTO saved = service.create(dto);
         return ResponseEntity.ok(ResponseWrapper.success(saved, "Risk profile created successfully"));
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<ResponseWrapper<CustomerRiskProfileDTO>> update(@PathVariable Integer id, @RequestBody @Valid CustomerRiskProfileDTO dto) {
-        CustomerRiskProfileDTO updated = service.update(id, dto);
+    @PutMapping("/update/{riskId}")
+    public ResponseEntity<ResponseWrapper<CustomerRiskProfileDTO>> update(
+            @PathVariable Integer riskId,
+            @RequestBody @Valid CustomerRiskProfileDTO dto) {
+        CustomerRiskProfileDTO updated = service.update(riskId, dto);
         return ResponseEntity.ok(ResponseWrapper.success(updated, "Risk profile updated successfully"));
     }
 
-    @DeleteMapping("/soft-delete/{id}")
-    public ResponseEntity<ResponseWrapper<String>> softDelete(@PathVariable Integer id, @RequestParam Integer userId) {
-        service.softDelete(id, userId);
-        return ResponseEntity.ok(ResponseWrapper.success("Risk profile soft-deleted"));
+    @PutMapping("/soft-delete/{riskId}")
+    public ResponseEntity<ResponseWrapper<String>> softDelete(
+            @PathVariable Integer riskId,
+            @RequestParam Integer userId) {
+        service.softDelete(riskId, userId);
+        return ResponseEntity.ok(ResponseWrapper.success("Risk profile marked as deleted"));
     }
 
     @GetMapping("/list")
-    public ResponseEntity<ResponseWrapper<List<CustomerRiskProfileDTO>>> list() {
+    public ResponseEntity<ResponseWrapper<List<CustomerRiskProfileDTO>>> getAll() {
         List<CustomerRiskProfileDTO> profiles = service.getAll();
-        return ResponseEntity.ok(ResponseWrapper.success(profiles, "Fetched all active risk profiles"));
+        return ResponseEntity.ok(ResponseWrapper.success(profiles, "Fetched active risk profiles"));
     }
 }
