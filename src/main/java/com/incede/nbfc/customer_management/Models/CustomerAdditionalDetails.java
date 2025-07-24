@@ -1,6 +1,8 @@
 package com.incede.nbfc.customer_management.Models;
 
 
+import java.math.BigDecimal;
+
 import com.incede.nbfc.customer_management.BaseEntity.BaseEntity;
 
 import jakarta.persistence.Column;
@@ -65,5 +67,6 @@ public class CustomerAdditionalDetails extends BaseEntity{
 
     @Column(name = "pep_verification_source")
     private String pepVerificationSource;
+
 
 }
