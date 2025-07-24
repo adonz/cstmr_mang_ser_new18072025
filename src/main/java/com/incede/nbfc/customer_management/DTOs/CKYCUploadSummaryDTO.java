@@ -13,8 +13,20 @@ public class CKYCUploadSummaryDTO {
     private Integer ckycUploadId;
     private String uploadStatus;
     private String ckycReferenceNo;
+    private String responsePayload;
     private LocalDateTime uploadDate;
     private String responseSummary;
     private Integer createdBy;
+    
+    public CKYCUploadSummaryDTO(Integer ckycUploadId, String uploadStatus, String ckycReferenceNo,
+            LocalDateTime uploadDate, String responsePayload, Integer createdBy) {
+this.ckycUploadId = ckycUploadId;
+this.uploadStatus = uploadStatus;
+this.ckycReferenceNo = ckycReferenceNo;
+this.uploadDate = uploadDate;
+this.responsePayload = responsePayload;
+this.createdBy = createdBy;
+}
+
 }
 

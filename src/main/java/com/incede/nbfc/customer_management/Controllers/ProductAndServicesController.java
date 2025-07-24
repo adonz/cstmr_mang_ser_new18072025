@@ -31,29 +31,29 @@ public class ProductAndServicesController {
 	}
 	
 	@PostMapping("/product-service-catalogue/")
-	ResponseEntity<ResponseWrapper<Integer>> createCustomerProductAndServiceCatalogue(@Valid @RequestBody ProductAndServicesDto leadDto){
-		Integer productServiceID = productAndServicesService.createProductAndServicesCatalogue(leadDto);
+	ResponseEntity<ResponseWrapper<Integer>> createCustomerProductAndServiceCatalogue(@Valid @RequestBody ProductAndServicesDto productServiceDto){
+		Integer productServiceID = productAndServicesService.createProductAndServicesCatalogue(productServiceDto);
 		return ResponseEntity.ok(ResponseWrapper.created(productServiceID,"Customer product and service catalogue Created successfully"));
 	}
 	
 	@PutMapping("/product-service-catalogue/update/")
-	ResponseEntity<ResponseWrapper<Integer>> updateCustomerProductAndServiceCatalogue(@RequestBody ProductAndServicesDto leadDto){
-		Integer productServiceID = productAndServicesService.updateProductAndServicesCatalogue(leadDto);
+	ResponseEntity<ResponseWrapper<Integer>> updateCustomerProductAndServiceCatalogue(@RequestBody ProductAndServicesDto productServiceDto){
+		Integer productServiceID = productAndServicesService.updateProductAndServicesCatalogue(productServiceDto);
 		return ResponseEntity.ok(ResponseWrapper.success(productServiceID,"Customer Lead master Updated successfully"));
 	}
 	
-	@GetMapping("/product-service-catalogue/{ serviceId}")
-	ResponseEntity<ResponseWrapper<ProductAndServicesDto>> getCustomerLeadMaterDetailsById(@PathVariable Integer serviceId){
-		ProductAndServicesDto productService = productAndServicesService.getProductAndServiceCatalogue(serviceId);
+	@GetMapping("/product-service-catalogue/{productId}")
+	ResponseEntity<ResponseWrapper<ProductAndServicesDto>> getCustomerLeadMaterDetailsById(@PathVariable Integer productId){
+		ProductAndServicesDto productService = productAndServicesService.getProductAndServiceCatalogue(productId);
 		return ResponseEntity.ok(ResponseWrapper.success(productService,"Customer Lead master details fetched successfully"));
 	}
 	
-    @DeleteMapping("/product-service-catalogue/soft-delete/{serviceId}")
+    @DeleteMapping("/product-service-catalogue/soft-delete/{productId}")
     public ResponseEntity<ResponseWrapper<String>> softDeleteLeasStageMaster(
-            @PathVariable Integer serviceId,
+            @PathVariable Integer productId,
             @RequestParam Integer  updatedBy) {
 
-    	productAndServicesService.softDeleteProductAndService(serviceId, updatedBy);
+    	productAndServicesService.softDeleteProductAndService(productId, updatedBy);
         return ResponseEntity.ok(ResponseWrapper.success("Leas Stage Master soft-deleted successfully."));
     }
     

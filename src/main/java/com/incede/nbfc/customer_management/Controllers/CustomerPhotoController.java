@@ -37,6 +37,12 @@ public class CustomerPhotoController {
 		 return ResponseEntity.ok(ResponseWrapper.created(customerPhoto,"customer Photo details saved successfully"));
 	}
 	
+	@PostMapping("/")
+	public ResponseEntity<ResponseWrapper<Integer>> addCustomerImage( @PathVariable CustomerPhotoDto customerDto){
+		 Integer customerPhoto = customerPhotoService.addCustomerPhoto(customerDto);
+		 return ResponseEntity.ok(ResponseWrapper.created(customerPhoto,"customer Photo details saved successfully"));
+	}
+	
 	
 	@GetMapping("/get/{customerId}")
 	public ResponseEntity<ResponseWrapper<List<CustomerPhotoDto>>> getCustomerPhotos( @PathVariable Integer customerId){

@@ -8,22 +8,18 @@ import com.incede.nbfc.customer_management.Models.ProductAndServicesModel;
 
 public interface ProductAndServicesRepository extends JpaRepository<ProductAndServicesModel, Integer>{
 
-	ProductAndServicesModel findByTenantIdAndProductAndServiceName(Integer tenantId, String productServiceName);
-
-	ProductAndServicesModel findByTenantIdAndProductAndServiceCode(Integer tenantId, String productServiceCode);
-
-	ProductAndServicesModel findByTenntIdAndProductAndServiceNameAndIsDeleteFalse(Integer tenantId,
-			String productServiceName);
-
-	ProductAndServicesModel findByTenantIdAndProductAndServiceCodeAndIsDeleteFalse(Integer tenantId,
-			String productServiceCode);
+	Page<ProductAndServicesModel> findByIsDeleteFalse(Pageable pageble);
 
 	ProductAndServicesModel findByProductServiceIdAndIsDeleteFalse(Integer productServiceId);
 
-	ProductAndServicesModel findByProductAndServiceCodeAndIsDeleteFalse(String productServiceCode);
+	ProductAndServicesModel findByProductServiceCodeAndIsDeleteFalse(String productServiceCode);
 
-	ProductAndServicesModel findByProductAndServiceNameAndIsDeleteFalse(String productServiceCode);
+	ProductAndServicesModel findByTenantIdAndProductServiceNameAndIsDeleteFalse(Integer tenantId,
+			String productServiceName);
 
-	Page<ProductAndServicesModel> findByIsDeleteFalse(Pageable pageble);
+	ProductAndServicesModel findByTenantIdAndProductServiceCodeAndIsDeleteFalse(Integer tenantId,
+			String productServiceCode);
+
+	ProductAndServicesModel findByProductServiceNameAndIsDeleteFalse(String productServiceCode);
 
 }

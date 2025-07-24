@@ -57,7 +57,7 @@ public class CustomerPhotoService {
 	         
 	         CustomerPhotoModel CustomerPhoto = new CustomerPhotoModel();
 	         CustomerPhoto.setCustomerId(ValidateFieldInteger(customerDto.getCustomerId(),"Customer ID"));
-	         CustomerPhoto.setPhotoFilePath(imagePathForDb);
+	        // CustomerPhoto.setPhotoFilePath(imagePathForDb);
 	         CustomerPhoto.setLatitude(validateLatitude(customerDto.getLatitude()));
 	         CustomerPhoto.setLongitude(validateLongitude(customerDto.getLongitude()));
 	         CustomerPhoto.setAccuracy(customerDto.getAccuracy() !=null? customerDto.getAccuracy():null);
@@ -80,6 +80,39 @@ public class CustomerPhotoService {
 		 
 	}
 	
+	public Integer addCustomerPhoto(CustomerPhotoDto customerDto) {
+		try {
+			 Optional<CustomerPhotoModel> lastPhoto = customerPhotoRepository
+					    .findTopByCustomerIdOrderByCaptureTimeDesc(customerDto.getCustomerId());
+			 if (lastPhoto.isPresent()) {
+				    Duration duration = Duration.between(lastPhoto.get().getCaptureTime(), LocalDateTime.now());
+				    if (duration.toMinutes() < 2) {
+				        throw new BusinessException("Duplicate photo upload within 2 minutes is not allowed.");
+				    }
+				}
+	         CustomerPhotoModel CustomerPhoto = new CustomerPhotoModel();
+	         CustomerPhoto.setCustomerId(ValidateFieldInteger(customerDto.getCustomerId(),"Customer ID"));
+	         CustomerPhoto.setPhotoFileId(customerDto.getPhotoFileId());
+	         CustomerPhoto.setLatitude(validateLatitude(customerDto.getLatitude()));
+	         CustomerPhoto.setLongitude(validateLongitude(customerDto.getLongitude()));
+	         CustomerPhoto.setAccuracy(customerDto.getAccuracy() !=null? customerDto.getAccuracy():null);
+	         CustomerPhoto.setCaptureTime(LocalDateTime.now());
+	         CustomerPhoto.setCaptureDevice(customerDto.getCaptureDevice() !=null?customerDto.getCaptureDevice():null );
+	         CustomerPhoto.setCaptureBy(ValidateFieldInteger(customerDto.getCaptureBy(),"Captured By"));
+	         CustomerPhoto.setLocationDescription(customerDto.getLocationDescription()!=null? customerDto.getLocationDescription():null);
+	         CustomerPhoto.setIsVerified(false);
+	         CustomerPhoto.setVerifiedBy(customerDto.getVerifiedBy()!=null?customerDto.getVerifiedBy():null);
+	         CustomerPhoto.setVerifiedAt(customerDto.getVerifiedBy()!=null?LocalDateTime.now():null);
+	         CustomerPhoto.setCreatedBy(ValidateFieldInteger(customerDto.getCreatedBy(),"created By"));
+	         
+	         CustomerPhotoModel saved = customerPhotoRepository.save(CustomerPhoto);
+	         return  convertToDto(saved).getPhotoId();
+		}
+		catch(BusinessException e) {
+			throw e;
+		}
+	}
+	
 	
 	// convert to dto methode
 	public CustomerPhotoDto convertToDto(CustomerPhotoModel model) {
@@ -87,7 +120,8 @@ public class CustomerPhotoService {
 
 	    dto.setPhotoId(model.getPhotoId());
 	    dto.setCustomerId(model.getCustomerId());
-	    dto.setPhotoFilePath(model.getPhotoFilePath());
+	   // dto.setPhotoFilePath(model.getPhotoFilePath());
+	    dto.setPhotoFileId(model.getPhotoFileId());
 	    dto.setLatitude(model.getLatitude());
 	    dto.setLongitude(model.getLongitude());
 	    dto.setAccuracy(model.getAccuracy());

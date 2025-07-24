@@ -11,7 +11,6 @@ import com.incede.nbfc.customer_management.Enums.ProductServicesTypes;
 import com.incede.nbfc.customer_management.Exceptions.BadRequestException.BadRequestException;
 import com.incede.nbfc.customer_management.Exceptions.BusinessException.BusinessException;
 import com.incede.nbfc.customer_management.Exceptions.ConflictException.ConflictException;
-import com.incede.nbfc.customer_management.Models.LeadStageMasterManagement;
 import com.incede.nbfc.customer_management.Models.ProductAndServicesModel;
 import com.incede.nbfc.customer_management.Repositories.ProductAndServicesRepository;
 
@@ -27,19 +26,19 @@ public class ProductAndServicesService {
 	@Transactional
 	public Integer createProductAndServicesCatalogue( ProductAndServicesDto productDto) {
 		try {
-			ProductAndServicesModel ver_psName = productAndServiceRepository.findByTenentIdAndProductAndServiceNameAndIsDeleteFalse(
+			ProductAndServicesModel ver_psName = productAndServiceRepository.findByTenantIdAndProductServiceNameAndIsDeleteFalse(
 					productDto.getTenantId(),productDto.getProductServiceName());
 			
-			ProductAndServicesModel ver_psCode = productAndServiceRepository.findByTenantIdAndProductAndServiceCodeAndIsDeleteFalse(
+			ProductAndServicesModel ver_psCode = productAndServiceRepository.findByTenantIdAndProductServiceCodeAndIsDeleteFalse(
 					productDto.getTenantId(),productDto.getProductServiceCode());
 			if(productDto.getCreatedBy() ==null) {
 				throw new BadRequestException("created by should not be null");
 			}
-			 if(ver_psName ==null) {
+			 if(ver_psName !=null) {
 				 throw new ConflictException("product service name already exists in database");
 
 			 }
-			 if(ver_psCode ==null) {
+			 if(ver_psCode !=null) {
 				 throw new ConflictException("product service code (ps_code) already exists in database");
 
 			 }
@@ -74,38 +73,43 @@ public class ProductAndServicesService {
 	@Transactional
 	public Integer updateProductAndServicesCatalogue(ProductAndServicesDto productDto) {
 		try {
-			if(productDto.getCreatedBy() == null) throw new BadRequestException("createBy should not be null");
-			if(productDto.getProductServiceId() ==null) throw new BadRequestException("Tenent id should not be null for updating");
+			if(productDto.getUpdatedBy() == null) throw new BadRequestException("updatedBy should not be null");
+			if(productDto.getProductServiceId() ==null) throw new BadRequestException("product service id should not be null for updating");
 
 			if(productDto.getProductServiceCode() !=null) {
-				ProductAndServicesModel existingPscode = productAndServiceRepository.findByProductAndServiceCodeAndIsDeleteFalse(productDto.getProductServiceCode());
+				ProductAndServicesModel existingPscode = productAndServiceRepository.findByProductServiceCodeAndIsDeleteFalse(productDto.getProductServiceCode());
 				if(existingPscode !=null)
 					throw new BadRequestException("product service code already exists");
 			}
 			if(productDto.getProductServiceName() !=null) {
-				ProductAndServicesModel existingPsname = productAndServiceRepository.findByProductAndServiceNameAndIsDeleteFalse(productDto.getProductServiceCode());
+				ProductAndServicesModel existingPsname = productAndServiceRepository.findByProductServiceNameAndIsDeleteFalse(productDto.getProductServiceCode());
 				if(existingPsname !=null) {
 					throw new BadRequestException("product service name already exists");
 				}
 			}
-			ProductServicesTypes ver_productService;
-			try {
-				  ver_productService = ProductServicesTypes.valueOf(productDto.getProductServiceType().toUpperCase());
+			ProductServicesTypes ver_productService = null;
+			
+			if(productDto.getProductServiceType() !=null) {
+				
+				try {
+					  ver_productService = ProductServicesTypes.valueOf(productDto.getProductServiceType().toUpperCase());
 
-			}catch(BadRequestException e){
-				throw  new BusinessException("ProductServicesTypes should be in PRODUCT or SERVICE"+e);
+				}catch(BadRequestException e){
+					throw  new BusinessException("ProductServicesTypes should be in PRODUCT or SERVICE"+e);
+				}
 			}
-			ProductAndServicesModel existingModel = productAndServiceRepository.findByProductServiceIdAndIsDeletedFalse(productDto.getProductServiceId());
+			ProductAndServicesModel existingModel = productAndServiceRepository.findByProductServiceIdAndIsDeleteFalse(productDto.getProductServiceId());
 
-			if(existingModel == null) {
+			if(existingModel != null) {
 				existingModel.setProductServiceName(productDto.getProductServiceName() !=null?productDto.getProductServiceName():existingModel.getProductServiceName());
 				existingModel.setProductServiceCode(productDto.getProductServiceCode() !=null ? productDto.getProductServiceCode() :existingModel.getProductServiceCode());
-				existingModel.setProductServiceType(ver_productService);
+				existingModel.setProductServiceType(ver_productService !=null ? ver_productService :existingModel.getProductServiceType());
 				existingModel.setDescription(productDto.getDescription() !=null ? productDto.getDescription() : existingModel.getDescription());
 				existingModel.setIsActive(productDto.getIsActive() !=null ? productDto.getIsActive() :existingModel.getIsActive());
-				 
+				 existingModel.setUpdatedBy(productDto.getUpdatedBy());
 				ProductAndServicesModel updateModel = productAndServiceRepository.save(existingModel);
 				return convertToDtoProductService(updateModel).getProductServiceId();
+			 
 			}else {
 				throw new BusinessException("Data not found for id"+productDto.getProductServiceId());
 			}
@@ -118,7 +122,7 @@ public class ProductAndServicesService {
 	@Transactional
 	public ProductAndServicesDto getProductAndServiceCatalogue(Integer productServiceId) {
  		 try {
- 			ProductAndServicesModel productServiceCatalogue = productAndServiceRepository.findByProductServiceIdAndIsDeletedFalse(productServiceId);
+ 			ProductAndServicesModel productServiceCatalogue = productAndServiceRepository.findByProductServiceIdAndIsDeleteFalse(productServiceId);
  			if(productServiceCatalogue ==null) throw new BusinessException("Data not found for id "+productServiceId);
  			return convertToDtoProductService(productServiceCatalogue);
  		 }
@@ -130,7 +134,7 @@ public class ProductAndServicesService {
 	@Transactional
 	public void softDeleteProductAndService(Integer serviceId, Integer updatedBy) {
 		try { 
- 			ProductAndServicesModel productServiceCatalogueDelete = productAndServiceRepository.findByProductServiceIdAndIsDeletedFalse(serviceId);
+ 			ProductAndServicesModel productServiceCatalogueDelete = productAndServiceRepository.findByProductServiceIdAndIsDeleteFalse(serviceId);
  			if(productServiceCatalogueDelete ==null) throw new BusinessException("Data not found for id "+serviceId);
  			productServiceCatalogueDelete.setIsDelete(true);
  			productServiceCatalogueDelete.setUpdatedBy(updatedBy);
@@ -152,9 +156,11 @@ public class ProductAndServicesService {
 	
 	private ProductAndServicesDto  convertToDtoProductService(ProductAndServicesModel result) {
 	    ProductAndServicesDto dto = new ProductAndServicesDto();
+	    dto.setProductServiceId(result.getProductServiceId());
 	    dto.setTenantId(result.getTenantId());
 	    dto.setProductServiceName(result.getProductServiceName());
 	    dto.setProductServiceCode(result.getProductServiceCode());
+	    dto.setProductServiceType(result.getProductServiceType().toString());
 	    dto.setDescription(result.getDescription());
 	    dto.setIsActive(result.getIsActive());
 	    dto.setIsDelete(result.getIsDelete());
