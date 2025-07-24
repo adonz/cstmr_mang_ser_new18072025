@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.incede.nbfc.customer_management.DTOs.CustomerPhotoDto;
+import com.incede.nbfc.customer_management.Exceptions.BadRequestException.BadRequestException;
 import com.incede.nbfc.customer_management.Exceptions.BusinessException.BusinessException;
 import com.incede.nbfc.customer_management.Models.CustomerPhotoModel;
 import com.incede.nbfc.customer_management.Repositories.CustomerPhotoRepository;
@@ -107,6 +108,19 @@ public class CustomerPhotoService {
 	         
 	         CustomerPhotoModel saved = customerPhotoRepository.save(CustomerPhoto);
 	         return  convertToDto(saved).getPhotoId();
+		}
+		catch(BusinessException e) {
+			throw e;
+		}
+	}
+	
+	
+	@Transactional
+	public CustomerPhotoDto getCustomerDtoByPhotoId(Integer PhotoId) {
+		try {
+			CustomerPhotoModel photoData = customerPhotoRepository.findByPhotoIdAndIsDeleteFalse(PhotoId);
+			if(photoData == null) throw new BadRequestException(" Data Not Found");
+			return convertToDto(photoData);
 		}
 		catch(BusinessException e) {
 			throw e;

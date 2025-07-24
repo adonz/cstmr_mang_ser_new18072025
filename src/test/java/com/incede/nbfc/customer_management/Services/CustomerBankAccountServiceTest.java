@@ -31,9 +31,30 @@ public class CustomerBankAccountServiceTest {
     private CustomerBankAccountService service;
 
     private CustomerBankAccountModel sampleAccountModel;
+    
+    private CustomerBankAccountDto sampleAccountDto;
 
     @BeforeEach
     void setUp() {
+    	
+    	sampleAccountDto = new CustomerBankAccountDto();
+    	sampleAccountDto.setBankAccountId(1);
+    	sampleAccountDto.setCustomerId(2);
+    	sampleAccountDto.setBankId(1);
+    	sampleAccountDto.setBranchName("Njarakkal");
+    	sampleAccountDto.setAccountNumber("123456780001");
+    	sampleAccountDto.setUpiId("glodin171@upi");
+    	sampleAccountDto.setAccountType(2);
+    	sampleAccountDto.setIsActive(true);
+    	sampleAccountDto.setIsPrimary(true);
+    	sampleAccountDto.setIdentity(UUID.randomUUID());
+    	sampleAccountDto.setCreatedAt(LocalDateTime.now());
+    	sampleAccountDto.setCreatedBy(1);
+    	sampleAccountDto.setUpdatedAt(LocalDateTime.now());
+    	sampleAccountDto.setUpdatedBy(1);
+    	sampleAccountDto.setIsDelete(false);
+        
+  
         sampleAccountModel = new CustomerBankAccountModel();
         sampleAccountModel.setBankAccountId(1);
         sampleAccountModel.setCustomerId(2);
@@ -63,4 +84,13 @@ public class CustomerBankAccountServiceTest {
 
         verify(repository, times(1)).findByBankAccountIdAndIsDeleteFalse(1);
     }
+    
+    @Test
+    void softDeleteBankAccountId_success() {
+        when(repository.findByBankAccountIdAndIsDeleteFalse(1)).thenReturn(sampleAccountModel);
+         String result = service.softDeleteCustomersBankAccountDetails(sampleAccountDto);
+         assertEquals("Customer Account with Id" + sampleAccountModel.getBankAccountId() + "deleted successfully",result);
+    }
+    
+    
 }

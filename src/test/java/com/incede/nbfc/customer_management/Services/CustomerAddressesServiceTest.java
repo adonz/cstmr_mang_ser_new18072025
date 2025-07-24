@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.incede.nbfc.customer_management.DTOs.CustomerAddressesDto;
 import com.incede.nbfc.customer_management.DTOs.CustomerRelationshipDto;
+import com.incede.nbfc.customer_management.Exceptions.BusinessException.BusinessException;
 import com.incede.nbfc.customer_management.Models.CustomerAddressesModel;
 import com.incede.nbfc.customer_management.Repositories.CustomerAddressesRepository;
 import com.incede.nbfc.customer_management.Services.CustomerAddressesService;
@@ -49,7 +50,7 @@ public class CustomerAddressesServiceTest {
     	customerAddressesDto.setPincode("682035");
     	customerAddressesDto.setIsActive(true);
     	customerAddressesDto.setIdentity(UUID.randomUUID());
-    	
+    	customerAddressesDto.setUpdatedBy(1001);
     	
         customerAddressesModel = new CustomerAddressesModel();
         customerAddressesModel.setAddressId(1);
@@ -67,6 +68,7 @@ public class CustomerAddressesServiceTest {
         customerAddressesModel.setPincode("682035");
         customerAddressesModel.setIsActive(true);
         customerAddressesModel.setIdentity(UUID.randomUUID());
+        customerAddressesModel.setUpdatedBy(1001);
     }
 
     @Test
@@ -90,8 +92,32 @@ public class CustomerAddressesServiceTest {
 
         CustomerAddressesDto result = customerAddressesService.getCustomerAddressDetailsByCustomerIdAndAddressId( 1001, 1);
 
-        assertEquals(1, result.getCustomerId());
+        assertEquals(1001, result.getCustomerId());
     }
     
+    @Test
+   void testGetByIdThrowsException_WhenDetailsNotFound() {
+	   when(customerAddressRepository.findByCustomerIdAndAddressIdAndIsDeleteFalse(1001, 1)).thenReturn(null);
+	   BusinessException thrown = assertThrows(BusinessException.class,
+			   () -> customerAddressesService.getCustomerAddressDetailsByCustomerIdAndAddressId(1001, 1)) ;
+	   assertEquals("details not forund", thrown.getMessage());
+   }
+    
+    @Test
+    void testSoftDeleteCustomerAddress_Success() {
+    	when(customerAddressRepository.findByCustomerIdAndAddressIdAndIsDeleteFalse(1001, 1)).thenReturn(customerAddressesModel);
+    	String result = customerAddressesService.softDeleteCustomerAddressDetails(1001, 1);
+    	assertEquals("1customer details deleted successfully",result);
+    	assertEquals(1001,customerAddressesModel.getUpdatedBy());
+    	
+    }
+    
+    @Test
+    void testSoftdeleteCustomerAddress_Error() {
+    	when(customerAddressRepository.findByCustomerIdAndAddressIdAndIsDeleteFalse(1001, 1)).thenReturn( null);
+    	BusinessException thrown = assertThrows(BusinessException.class,
+    			()->customerAddressesService.softDeleteCustomerAddressDetails(1001, 1));
+    			assertEquals("No customer details found !!",thrown.getMessage());
+     }
     
 }

@@ -2,6 +2,7 @@ package com.incede.nbfc.customer_management.Services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -18,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.incede.nbfc.customer_management.DTOs.CustomerPhotoDto;
+import com.incede.nbfc.customer_management.Exceptions.BusinessException.BusinessException;
 import com.incede.nbfc.customer_management.Models.CustomerPhotoModel;
 import com.incede.nbfc.customer_management.Repositories.CustomerPhotoRepository;
 
@@ -37,6 +39,7 @@ public class CustomerPhotoServiceTest {
     @BeforeEach
     void setUp() {
     	customerPhotoDto = new CustomerPhotoDto();
+    	customerPhotoDto.setPhotoId(123);
         customerPhotoDto.setCustomerId(1001);
         customerPhotoDto.setPhotoFileId(501);
         customerPhotoDto.setLatitude(10.123456);
@@ -47,6 +50,7 @@ public class CustomerPhotoServiceTest {
         customerPhotoDto.setCaptureBy(101);
         customerPhotoDto.setLocationDescription("Front Gate");
         customerPhotoDto.setCreatedBy(999);
+        customerPhotoDto.setUpdatedBy(1001);
 
          photoModel = new CustomerPhotoModel();
         photoModel.setPhotoId(123);  
@@ -62,6 +66,7 @@ public class CustomerPhotoServiceTest {
         photoModel.setIsVerified(false);
         photoModel.setVerifiedBy(null);
         photoModel.setVerifiedAt(null);
+        photoModel.setUpdatedBy(1001);
     }
     
     @Test
@@ -75,4 +80,30 @@ public class CustomerPhotoServiceTest {
         assertEquals(123, photoId);
         verify(photoRepo, times(1)).save(any(CustomerPhotoModel.class));
     }
+    
+    @Test
+    void sofeDeleteCustomerPhoto_success() {
+        when(photoRepo.findByPhotoIdAndIsDeleteFalse(123)).thenReturn(photoModel);
+         Integer result = photoService.deleteCustomerPhotosForPhotoId(123, 1001);
+         assertEquals(photoModel.getPhotoId(),result);
+         assertEquals(1001, photoModel.getUpdatedBy());
+
+    }
+    
+    @Test
+    void softDeleteCustomerPhoto_fails() {
+    	when(photoRepo.findByPhotoIdAndIsDeleteFalse(123)).thenReturn(null);
+    	BusinessException thrown = assertThrows(BusinessException.class,
+    			()->photoService.deleteCustomerPhotosForPhotoId( 123,1001));
+    	assertEquals("No data found for id: "+photoModel.getPhotoId(),thrown.getMessage());
+    }
+    
+    void getphotoDetailsByPhotoID() {
+    	when(photoRepo.findByPhotoIdAndIsDeleteFalse(123)).thenReturn(photoModel);
+    	CustomerPhotoDto result = photoService.getCustomerDtoByPhotoId(123);
+    	assertEquals("Pixel 6",  photoModel.getCaptureDevice());
+    	assertEquals(10.123456, photoModel.getLatitude());
+    	assertEquals(76.123456, photoModel.getLongitude());
+    }
+    
 }
