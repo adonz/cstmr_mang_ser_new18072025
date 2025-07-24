@@ -12,8 +12,11 @@ public class CustomerPhotoDto {
 	
  	private Integer customerId;
 	
- 	@NotNull(message="photo file path should not be null")
- 	private String photoFilePath;
+// 	@NotNull(message="photo file path should not be null")
+// 	private String photoFilePath;
+ 	
+ 	@NotNull(message="photo file id should not be null")
+ 	private Integer photoFileId;
 	
  	@NotNull(message="latitude should not be null")
  	private Double latitude;

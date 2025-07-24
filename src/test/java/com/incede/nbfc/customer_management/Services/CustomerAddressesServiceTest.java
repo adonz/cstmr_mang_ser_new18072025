@@ -1,8 +1,8 @@
-package com.incede.nbfc.customer_management.Junit.TestService;
-
+package com.incede.nbfc.customer_management.Services;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.incede.nbfc.customer_management.DTOs.CustomerAddressesDto;
+import com.incede.nbfc.customer_management.DTOs.CustomerRelationshipDto;
 import com.incede.nbfc.customer_management.Models.CustomerAddressesModel;
 import com.incede.nbfc.customer_management.Repositories.CustomerAddressesRepository;
 import com.incede.nbfc.customer_management.Services.CustomerAddressesService;
@@ -31,6 +32,25 @@ public class CustomerAddressesServiceTest {
 
     @BeforeEach
     void setUp() {
+    	
+    	CustomerAddressesDto customerAddressesDto = new CustomerAddressesDto();
+    	customerAddressesDto.setAddressId(1);
+    	customerAddressesDto.setCustomerId(1001);
+    	customerAddressesDto.setAddressType("Home");
+    	customerAddressesDto.setDoorNumber("12A");
+    	customerAddressesDto.setAddressLineOne("1st Cross Street");
+    	customerAddressesDto.setAddressLineTwo("Near Park");
+    	customerAddressesDto.setLandMark("City Center");
+    	customerAddressesDto.setPlaceName("Ernakulam");
+    	customerAddressesDto.setCity("Ernakulam");
+    	customerAddressesDto.setDistrict("Ernakulam");
+    	customerAddressesDto.setStateName("Kerala");
+    	customerAddressesDto.setCountry(91);
+    	customerAddressesDto.setPincode("682035");
+    	customerAddressesDto.setIsActive(true);
+    	customerAddressesDto.setIdentity(UUID.randomUUID());
+    	
+    	
         customerAddressesModel = new CustomerAddressesModel();
         customerAddressesModel.setAddressId(1);
         customerAddressesModel.setCustomerId(1001);
@@ -63,4 +83,15 @@ public class CustomerAddressesServiceTest {
         verify(customerAddressRepository, times(1))
             .findByCustomerIdAndAddressIdAndIsDeleteFalse(1001, 1);
     }
+    
+    @Test
+    void testGetByIdReturnsDto() {
+        when(customerAddressRepository.findByCustomerIdAndAddressIdAndIsDeleteFalse(1001,1)).thenReturn((customerAddressesModel));
+
+        CustomerAddressesDto result = customerAddressesService.getCustomerAddressDetailsByCustomerIdAndAddressId( 1001, 1);
+
+        assertEquals(1, result.getCustomerId());
+    }
+    
+    
 }
