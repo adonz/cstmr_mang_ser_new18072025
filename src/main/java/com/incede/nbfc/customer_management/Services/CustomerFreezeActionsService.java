@@ -23,12 +23,29 @@ public class CustomerFreezeActionsService {
 
     // CREATE
     public CustomerFreezeActionsDto createCustomerFreezeAction(CustomerFreezeActionsDto dto) {
+        if (!"PARTIAL".equalsIgnoreCase(dto.getFreezeType()) && !"FULL".equalsIgnoreCase(dto.getFreezeType())) {
+            throw new IllegalArgumentException("Invalid freeze type. Must be PARTIAL or FULL.");
+        }
+
+        if (dto.getReason() == null || dto.getEffectiveFrom() == null || dto.getCustomerId() == null) {
+            throw new IllegalArgumentException("reason, effective_from, and customer_id are required fields.");
+        }
+
+        boolean exists = freezeActionsRepository.existsByCustomerIdAndStatusAndIsDeleteFalse(
+            dto.getCustomerId(), "ACTIVE"
+        );
+        if (exists) {
+            throw new IllegalStateException("Active freeze already exists for this customer.");
+        }
+
+        dto.setStatus("ACTIVE"); 
         CustomerFreezeActions entity = toEntity(dto);
         CustomerFreezeActions saved = freezeActionsRepository.save(entity);
         return toDto(saved);
     }
 
-    // GET ALL
+
+//    // GET ALL
     public List<CustomerFreezeActionsDto> getAllByCustomerId(Integer customerId) {
         return freezeActionsRepository.findAllByCustomerId(customerId)
             .stream()
@@ -37,12 +54,19 @@ public class CustomerFreezeActionsService {
     }
 
 
-    // GET BY ID
-    public CustomerFreezeActionsDto getById(Integer id) {
-        CustomerFreezeActions entity = freezeActionsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Freeze action not found with ID: " + id));
-        return toDto(entity);
+    public List<CustomerFreezeActionsDto> getFreezeHistoryByCustomerId(Integer customerId) {
+        List<CustomerFreezeActions> freezeList = freezeActionsRepository
+                .findByCustomerIdAndIsDeleteFalseOrderByEffectiveFromDesc(customerId);
+        
+        if (freezeList.isEmpty()) {
+            throw new RuntimeException("No active freeze history found for customer ID: " + customerId);
+        }
+
+        return freezeList.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
     }
+
 
     // UPDATE
     public CustomerFreezeActionsDto updateFreezeAction(Integer id, CustomerFreezeActionsDto dto) {
@@ -63,15 +87,25 @@ public class CustomerFreezeActionsService {
         return toDto(updated);
     }
 
-    // DELETE (Soft Delete)
-    public void deleteFreezeAction(Integer id) {
-        CustomerFreezeActions entity = freezeActionsRepository.findById(id)
-                .orElseThrow(() -> new BusinessException("Freeze Action not found with ID: " + id));
+    public void deleteFreezeAction(Integer freezeId, Integer updatedBy) {
+        CustomerFreezeActions entity = freezeActionsRepository.findById(freezeId)
+                .orElseThrow(() -> new BusinessException("Freeze action not found with ID: " + freezeId));
+
+        if (!"LIFTED".equalsIgnoreCase(entity.getStatus())) {
+            throw new BusinessException("Only 'LIFTED' freeze actions can be soft-deleted.");
+        }
+
+        if (Boolean.TRUE.equals(entity.getIsDelete())) {
+            throw new BusinessException("Freeze action is already soft-deleted.");
+        }
 
         entity.setIsDelete(true);
+        entity.setUpdatedBy(updatedBy);
+        entity.setUpdatedAt(LocalDateTime.now());
+
         freezeActionsRepository.save(entity);
     }
-    
+
     
     
     public CustomerFreezeActionsDto liftFreezeAction(Integer freezeId, LocalDate effectiveTo, Integer userId) {
@@ -111,6 +145,10 @@ public class CustomerFreezeActionsService {
 
         List<CustomerFreezeActions> activeFreezes = freezeActionsRepository.findByCustomerIdAndStatusAndIsDeleteFalseAndEffectiveFromLessThanEqualAndEffectiveToCondition(
                 customerId, "ACTIVE", today);
+        
+        if (activeFreezes.isEmpty()) {
+            throw new BusinessException("Customer is not under any active freeze.");
+        }
 
         return activeFreezes.stream()
                 .map(this::toDto)

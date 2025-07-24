@@ -28,16 +28,15 @@ public class CustomerFreezeActionsController {
     // CREATE
     @PostMapping("/")
     public ResponseEntity<ResponseWrapper<CustomerFreezeActionsDto>> createFreezeAction(
-            @PathVariable Integer customerId,
             @Valid @RequestBody CustomerFreezeActionsDto dto
     ) {
-        dto.setCustomerId(customerId);
         CustomerFreezeActionsDto saved = freezeActionsService.createCustomerFreezeAction(dto);
         return ResponseEntity.status(201)
                 .body(ResponseWrapper.created(saved, "Freeze action created successfully."));
     }
+    
 
-    // GET ALL BY CUSTOMER ID
+    // GET ALL
     @GetMapping("/{customerId}")
     public ResponseEntity<ResponseWrapper<List<CustomerFreezeActionsDto>>> getAllFreezeActions(
             @PathVariable Integer customerId
@@ -47,14 +46,13 @@ public class CustomerFreezeActionsController {
     }
 
     // GET BY ID
-//    @GetMapping("/{freezeId}")
-//    public ResponseEntity<ResponseWrapper<CustomerFreezeActionsDto>> getFreezeActionById(
-//            @PathVariable Integer customerId,
-//            @PathVariable Integer freezeId
-//    ) {
-//        CustomerFreezeActionsDto action = freezeActionsService.getById(freezeId);
-//        return ResponseEntity.ok(ResponseWrapper.success(action, "Freeze action retrieved successfully."));
-//    }
+    @GetMapping("/history/{customerId}")
+    public ResponseEntity<ResponseWrapper<List<CustomerFreezeActionsDto>>> getFreezeHistoryByCustomerId(
+            @PathVariable Integer customerId
+    ) {
+        List<CustomerFreezeActionsDto> history = freezeActionsService.getFreezeHistoryByCustomerId(customerId);
+        return ResponseEntity.ok(ResponseWrapper.success(history, "Freeze history retrieved successfully."));
+    }
 
     // UPDATE
     @PutMapping("/{customerId}/{freezeId}")
@@ -69,14 +67,14 @@ public class CustomerFreezeActionsController {
     }
 
     // DELETE (Soft Delete)
-    @PatchMapping("/{freezeId}/delete")
-    public ResponseEntity<ResponseWrapper<String>> softDeleteFreezeAction(
-            @PathVariable Integer freezeId
-    ) {
-        freezeActionsService.deleteFreezeAction(freezeId);
-        return ResponseEntity.ok(ResponseWrapper.success("Freeze action soft-deleted successfully."));
+    @PatchMapping("/{freezeId}")
+    public ResponseEntity<ResponseWrapper<String>> softDeleteFreeze(
+            @PathVariable Integer freezeId,
+            @RequestParam Integer updatedBy) {
+        freezeActionsService.deleteFreezeAction(freezeId, updatedBy);
+        return ResponseEntity.ok(ResponseWrapper.success(null, "Freeze action soft-deleted successfully."));
     }
-    
+
     @PostMapping("/freeze/lift")
     public ResponseEntity<ResponseWrapper<CustomerFreezeActionsDto>> liftFreeze(
             @RequestBody Map<String, Object> requestBody) {
@@ -101,5 +99,3 @@ public class CustomerFreezeActionsController {
 
 
 }
-//Pending User Story  5
-//Vlidation Check

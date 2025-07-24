@@ -45,7 +45,7 @@ public class CKYCUploadController {
     @PutMapping("/record-response")
     public ResponseEntity<ResponseWrapper<String>> recordUploadResponse(
             @RequestParam Integer ckycUploadId,
-            @RequestParam String uploadStatus, // SUCCESS or FAILED
+            @RequestParam String uploadStatus, 
             @RequestParam(required = false) String ckycReferenceNo,
             @RequestParam String responsePayload,
             @RequestParam Integer updatedBy

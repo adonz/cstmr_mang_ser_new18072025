@@ -13,14 +13,19 @@ import com.incede.nbfc.customer_management.Models.LeadSourceMaster;
 @Repository
 public interface LeadSourceMasterRepository extends JpaRepository<LeadSourceMaster, Integer> {
 	
-	boolean existsByTenantIdAndSourceNameIgnoreCaseAndIsDeleteFalse(Integer tenantId, String sourceName);
+	 boolean existsByTenantIdAndSourceNameIgnoreCaseAndIsDeleteFalse(Integer tenantId, String sourceName);
 
-	Optional<LeadSourceMaster> findByTenantIdAndIdentityAndIsDeleteFalse(Integer tenantId, UUID identity);
+	    // Get all lead sources by tenant
+	    List<LeadSourceMaster> findAllByTenantIdAndIsDeleteFalse(Integer tenantId);
 
-//    // ✅ Or add this if you want to fetch by ID only if not deleted
-//    Optional<LeadSourceMaster> findByIdAndIsDeleteFalse(Integer sourceId);
-	
-	List<LeadSourceMaster> findAllByTenantIdAndIsDeleteFalse(Integer tenantId);
+	    // Used in update() and softDelete()
+	    Optional<LeadSourceMaster> findBySourceIdAndIsDeleteFalse(Integer sourceId);
+
+	    // Used in getByIdentity(UUID)
+	    Optional<LeadSourceMaster> findByIdentityAndIsDeleteFalse(UUID identity);
+
+	    // If you need identity lookup with tenant context too
+	    Optional<LeadSourceMaster> findByTenantIdAndIdentityAndIsDeleteFalse(Integer tenantId, UUID identity);
 
 
 }

@@ -40,4 +40,9 @@ public interface CustomerFreezeActionsRepository extends JpaRepository<CustomerF
 		        @Param("status") String status,
 		        @Param("today") LocalDate today);
 
+	
+	boolean existsByCustomerIdAndStatusAndIsDeleteFalse(Integer customerId, String status);
+
+	List<CustomerFreezeActions> findByCustomerIdAndIsDeleteFalseOrderByEffectiveFromDesc(Integer customerId);
+
 }

@@ -19,15 +19,15 @@ import jakarta.validation.Valid;
 @Service
 public class CustomerService {
 
-    private final MockOtpService mockOtpService;
+//    private final MockOtpService mockOtpService;
 
     private final TenantConfig tenantConfig;
     private final CustomerRepository customerRepository;
 
-    public CustomerService(TenantConfig tenantConfig, CustomerRepository customerRepository,MockOtpService mockOtpService) {
+    public CustomerService(TenantConfig tenantConfig, CustomerRepository customerRepository) {
         this.tenantConfig = tenantConfig;
         this.customerRepository = customerRepository;
-        this.mockOtpService = mockOtpService;
+//        this.mockOtpService = mockOtpService;
     }
 
     @Transactional
