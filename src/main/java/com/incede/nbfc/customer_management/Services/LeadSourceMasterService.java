@@ -23,11 +23,14 @@ public class LeadSourceMasterService {
         this.tenantConfig = tenantConfig;
     }
 
+
+    // User Story 1: Add new lead source
     public LeadSourceMasterDto create(LeadSourceMasterDto dto) {
+    	System.out.println("Received DTO: " + dto); // Log the DTO
+        System.out.println("SourceName: " + dto.getSourceName());
         if (dto.getSourceName() == null || dto.getSourceName().isBlank()) {
             throw new IllegalArgumentException("sourceName is required");
         }
-
         if (dto.getCreatedBy() == null) {
             throw new IllegalArgumentException("createdBy is required");
         }
@@ -36,10 +39,10 @@ public class LeadSourceMasterService {
         String trimmedName = dto.getSourceName().trim();
 
         boolean exists = leadSourceMasterRepository
-            .existsByTenantIdAndSourceNameIgnoreCaseAndIsDeleteFalse(tenantId, trimmedName);
+                .existsByTenantIdAndSourceNameIgnoreCaseAndIsDeleteFalse(tenantId, trimmedName);
 
         if (exists) {
-            throw new IllegalArgumentException("Lead Source name already exists for this tenant");
+            throw new BusinessException("Lead Source name already exists for this tenant");
         }
 
         LeadSourceMaster entity = new LeadSourceMaster();
@@ -51,89 +54,84 @@ public class LeadSourceMasterService {
         entity.setUpdatedAt(LocalDateTime.now());
         entity.setIsDelete(false);
 
-        entity = leadSourceMasterRepository.save(entity);
-        return convertToDto(entity);
+        LeadSourceMaster saved = leadSourceMasterRepository.save(entity);
+        return convertToDto(saved);
     }
 
-
-    
-    
-    public LeadSourceMasterDto updateSourceName(UUID identity, String newSourceName, Integer updatedBy) {
-        Integer tenantId = tenantConfig.getTenantId();
-
+    // User Story 2: Update source name
+    public LeadSourceMasterDto update(Integer sourceId, LeadSourceMasterDto dto) {
         LeadSourceMaster existing = leadSourceMasterRepository
-                .findByTenantIdAndIdentityAndIsDeleteFalse(tenantId, identity)
-                .orElseThrow(() -> new BusinessException("Lead source not found."));
+                .findBySourceIdAndIsDeleteFalse(sourceId)
+                .orElseThrow(() -> new BusinessException("Lead Source not found"));
 
-        if (newSourceName == null || newSourceName.trim().isEmpty()) {
-            throw new BusinessException("New source name is required.");
+        if (dto.getSourceName() == null || dto.getSourceName().isBlank()) {
+            throw new IllegalArgumentException("sourceName is required for update");
         }
-        existing.setSourceName(newSourceName.trim());
-        existing.setUpdatedBy(updatedBy);
+
+        existing.setSourceName(dto.getSourceName().trim());
+        existing.setUpdatedBy(dto.getUpdatedBy());
         existing.setUpdatedAt(LocalDateTime.now());
+
         LeadSourceMaster updated = leadSourceMasterRepository.save(existing);
         return convertToDto(updated);
     }
-    
-    public void softDeleteByIdentity(UUID identity, Integer deletedBy) {
-        Integer tenantId = tenantConfig.getTenantId();
 
+    // User Story 3: Soft delete
+    public void softDelete(Integer sourceId, Integer updatedBy) {
         LeadSourceMaster existing = leadSourceMasterRepository
-                .findByTenantIdAndIdentityAndIsDeleteFalse(tenantId, identity)
-                .orElseThrow(() -> new BusinessException("Lead source not found."));
+                .findBySourceIdAndIsDeleteFalse(sourceId)
+                .orElseThrow(() -> new BusinessException("Lead Source not found"));
 
         existing.setIsDelete(true);
-        existing.setUpdatedBy(deletedBy);
+        existing.setUpdatedBy(updatedBy);
         existing.setUpdatedAt(LocalDateTime.now());
 
         leadSourceMasterRepository.save(existing);
     }
+
+    // User Story 4: View all by tenant
     public List<LeadSourceMasterDto> getAllByTenant() {
         Integer tenantId = tenantConfig.getTenantId();
-
-        return leadSourceMasterRepository
-                .findAllByTenantIdAndIsDeleteFalse(tenantId)
-                .stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+        List<LeadSourceMaster> list = leadSourceMasterRepository
+                .findAllByTenantIdAndIsDeleteFalse(tenantId);
+        return list.stream().map(this::convertToDto).collect(Collectors.toList());
     }
+
+    // User Story 5: Get by UUID identity
     public LeadSourceMasterDto getByIdentity(UUID identity) {
-        Integer tenantId = tenantConfig.getTenantId();
-
         LeadSourceMaster entity = leadSourceMasterRepository
-                .findByTenantIdAndIdentityAndIsDeleteFalse(tenantId, identity)
-                .orElseThrow(() -> new BusinessException("Lead source not found."));
-
+                .findByIdentityAndIsDeleteFalse(identity)
+                .orElseThrow(() -> new BusinessException("Lead Source not found with given identity"));
         return convertToDto(entity);
     }
 
-
-
-
-    private LeadSourceMaster convertToEntity(LeadSourceMasterDto dto) {
-        LeadSourceMaster entity = new LeadSourceMaster();
-        entity.setCreatedBy(dto.getCreatedBy());
-        entity.setUpdatedBy(dto.getUpdatedBy());
-        entity.setUpdatedAt(dto.getUpdatedAt());
-        entity.setIdentity(dto.getIdentity());
-        entity.setIsDelete(dto.getIsDelete());
-        entity.setSourceId(dto.getSourceId());
-        entity.setSourceName(dto.getSourceName());
-        // sourceName, createdAt, isDelete, tenantId, identity will be set in create()
-        return entity;
-    }
+    // ---- Conversion methods ----
 
     private LeadSourceMasterDto convertToDto(LeadSourceMaster entity) {
         LeadSourceMasterDto dto = new LeadSourceMasterDto();
         dto.setSourceId(entity.getSourceId());
-        dto.setSourceName(entity.getSourceName());
-        dto.setCreatedAt(entity.getCreatedAt());
-        dto.setCreatedBy(entity.getCreatedBy());
-        dto.setUpdatedAt(entity.getUpdatedAt());
-        dto.setUpdatedBy(entity.getUpdatedBy());
-        dto.setIsDelete(entity.getIsDelete());
         dto.setTenantId(entity.getTenantId());
+        dto.setSourceName(entity.getSourceName());
         dto.setIdentity(entity.getIdentity());
+        dto.setIsDelete(entity.getIsDelete());
+        dto.setCreatedAt(entity.getCreatedAt());
+        dto.setUpdatedAt(entity.getUpdatedAt());
+        dto.setCreatedBy(entity.getCreatedBy());
+        dto.setUpdatedBy(entity.getUpdatedBy());
         return dto;
+    }
+
+    public LeadSourceMaster convertToEntity(LeadSourceMasterDto dto) {
+        LeadSourceMaster entity = new LeadSourceMaster();
+        entity.setSourceId(dto.getSourceId());
+        entity.setTenantId(dto.getTenantId());
+        entity.setSourceName(dto.getSourceName());
+        entity.setIdentity(dto.getIdentity());
+        entity.setIsDelete(dto.getIsDelete());
+        entity.setCreatedAt(dto.getCreatedAt());
+        entity.setUpdatedAt(dto.getUpdatedAt());
+        entity.setCreatedBy(dto.getCreatedBy());
+        entity.setUpdatedBy(dto.getUpdatedBy());
+        return entity;
     }
 }

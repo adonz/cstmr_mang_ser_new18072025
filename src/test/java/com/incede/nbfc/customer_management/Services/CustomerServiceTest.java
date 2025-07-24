@@ -32,8 +32,8 @@ class CustomerServiceTest {
     @Mock
     private TenantConfig tenantConfig;
 
-    @Mock
-    private MockOtpService mockOtpService;
+//    @Mock
+//    private MockOtpService mockOtpService;
 
     @InjectMocks
     private CustomerService customerService;

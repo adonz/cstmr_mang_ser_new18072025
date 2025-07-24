@@ -1,4 +1,4 @@
-package com.incede.nbfc.customer_management.Controllers.customer;
+package com.incede.nbfc.customer_management.Controllers;
 
 import java.util.List;
 

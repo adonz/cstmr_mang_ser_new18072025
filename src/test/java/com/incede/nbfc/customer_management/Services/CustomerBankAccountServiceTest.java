@@ -16,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.incede.nbfc.customer_management.DTOs.CustomerBankAccountDto;
 import com.incede.nbfc.customer_management.Models.CustomerBankAccountModel;
 import com.incede.nbfc.customer_management.Repositories.CustomerBankAccountRepository;
-import com.incede.nbfc.customer_management.Services.CustomerBankAccountService;
 
 import static org.junit.jupiter.api.Assertions.*;
 

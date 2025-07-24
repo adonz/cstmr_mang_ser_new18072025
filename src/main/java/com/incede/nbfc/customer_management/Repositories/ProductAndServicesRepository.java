@@ -8,7 +8,6 @@ import com.incede.nbfc.customer_management.Models.ProductAndServicesModel;
 
 public interface ProductAndServicesRepository extends JpaRepository<ProductAndServicesModel, Integer>{
 
- 
 	Page<ProductAndServicesModel> findByIsDeleteFalse(Pageable pageble);
 
 	ProductAndServicesModel findByProductServiceIdAndIsDeleteFalse(Integer productServiceId);

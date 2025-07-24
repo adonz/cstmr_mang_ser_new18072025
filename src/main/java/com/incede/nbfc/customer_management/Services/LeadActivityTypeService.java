@@ -52,28 +52,55 @@ public LeadActivityTypeDto create(LeadActivityTypeDto dto) {
 
 
 // User Story 2: Update
+
 @Transactional
-public LeadActivityTypeDto update(Integer id, Integer tenantId, String newTypeName, Integer updatedBy) {
-//    tenantConfig.validateTenant(tenantId);
+public LeadActivityTypeDto update(int id, int tenantId, String newName, int updatedBy) {
+    LeadActivityType entity = activityTypeRepository.findByActivityTypeIdAndTenantIdAndIsDeleteFalse(id, tenantId)
+        .orElseThrow(() -> new IllegalArgumentException("Entity not found"));
 
-    LeadActivityType entity = activityTypeRepository
-            .findByActivityTypeIdAndTenantIdAndIsDeleteFalse(id, tenantId)
-            .orElseThrow(() -> new IllegalArgumentException("Activity Type not found"));
+    // Check if name already exists on another entity
+    boolean exists = activityTypeRepository.existsByTenantIdAndTypeNameIgnoreCaseAndIsDeleteFalse(tenantId, newName.toUpperCase());
 
-    String normalizedName = newTypeName.trim().toUpperCase();
-    boolean duplicateExists = activityTypeRepository
-            .existsByTenantIdAndTypeNameIgnoreCaseAndIsDeleteFalse(tenantId, normalizedName);
-
-    if (duplicateExists && !entity.getTypeName().equalsIgnoreCase(normalizedName)) {
+    if (exists && !entity.getTypeName().equalsIgnoreCase(newName)) {
         throw new IllegalArgumentException("Another activity type with same name already exists");
     }
 
-    entity.setTypeName(normalizedName);
+    entity.setTypeName(newName.toUpperCase());
     entity.setUpdatedBy(updatedBy);
     entity.setUpdatedAt(LocalDateTime.now());
 
-    return mapToDto(activityTypeRepository.save(entity));
+    LeadActivityType saved = activityTypeRepository.save(entity);
+    return mapToDto(saved);
 }
+
+//public LeadActivityTypeDto update(Integer id, Integer tenantId, String newTypeName, Integer updatedBy) {
+//
+//    if (newTypeName == null || newTypeName.trim().isEmpty()) {
+//        throw new IllegalArgumentException("New type name must not be null or empty");
+//    }
+//
+//    LeadActivityType entity = activityTypeRepository
+//            .findByActivityTypeIdAndTenantIdAndIsDeleteFalse(id, tenantId)
+//            .orElseThrow(() -> new IllegalArgumentException("Activity Type not found"));
+//
+//    String normalizedName = newTypeName.trim().toUpperCase();
+//
+//    boolean duplicateExists = activityTypeRepository
+//            .existsByTenantIdAndTypeNameIgnoreCaseAndIsDeleteFalse(tenantId, normalizedName);
+//
+//    String existingName = entity.getTypeName() != null ? entity.getTypeName().trim().toUpperCase() : "";
+//
+//    if (duplicateExists && !existingName.equalsIgnoreCase(normalizedName)) {
+//        throw new IllegalArgumentException("Another activity type with same name already exists");
+//    }
+//
+//    entity.setTypeName(normalizedName);
+//    entity.setUpdatedBy(updatedBy);
+//    entity.setUpdatedAt(LocalDateTime.now());
+//
+//    return mapToDto(activityTypeRepository.save(entity));
+//}
+
 
 // User Story 3: Soft Delete
 @Transactional

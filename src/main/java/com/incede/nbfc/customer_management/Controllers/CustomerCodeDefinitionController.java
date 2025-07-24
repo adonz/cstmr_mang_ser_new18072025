@@ -20,7 +20,7 @@ import jakarta.validation.Valid;
 
 @CrossOrigin(origins = "http://192.168.1.65:5173")
 @RestController
-@RequestMapping("/v1/tenant/{tenantId}/code-definitions")
+@RequestMapping("/v1/code-definitions")
 public class CustomerCodeDefinitionController {
 
     private final CustomerCodeDefinitionService customerCodeDefinitionService;
@@ -31,10 +31,10 @@ public class CustomerCodeDefinitionController {
 
     @PostMapping
     public ResponseEntity<ResponseWrapper<Integer>> createCodeDefinition(
-            @PathVariable Integer tenantId,
+//            @PathVariable Integer tenantId,
             @Valid @RequestBody CustomerCodeDefinitionDto dto
     ) {
-        dto.setTenantId(tenantId); 
+//        dto.setTenantId(tenantId); 
         CustomerCodeDefinitionDto savedDto = customerCodeDefinitionService.createCustomerCodeDefinition(dto);
         return ResponseEntity.status(201)
                 .body(ResponseWrapper.created(savedDto.getId(), "Customer code definition created successfully."));
@@ -43,7 +43,7 @@ public class CustomerCodeDefinitionController {
 
     
     
-    @PostMapping("/generate")
+    @PostMapping("{tenantId}/generate")
     public ResponseEntity<ResponseWrapper<String>> generateCustomerCode(
             @PathVariable Integer tenantId,
             @RequestParam(required = false) String branchCode,
@@ -55,7 +55,7 @@ public class CustomerCodeDefinitionController {
     }
     
     
-    @GetMapping
+    @GetMapping("{tenantId}")
     public ResponseEntity<ResponseWrapper<List<CustomerCodeDefinitionDto>>> getDefinitionsByTenant(
             @PathVariable Integer tenantId) {
         List<CustomerCodeDefinitionDto> list = customerCodeDefinitionService.getActiveDefinitionsByTenant(tenantId);
@@ -66,7 +66,7 @@ public class CustomerCodeDefinitionController {
     
     @PostMapping("/{customerCodeDefinitionId}/deactivate")
     public ResponseEntity<ResponseWrapper<String>> deactivateCodeDefinition(
-            @PathVariable Integer tenantId,
+//            @PathVariable Integer tenantId,
             @PathVariable Integer customerCodeDefinitionId,
             @RequestParam Integer userId) {
         customerCodeDefinitionService.deactivateCustomerCodeDefinition(customerCodeDefinitionId, userId);
