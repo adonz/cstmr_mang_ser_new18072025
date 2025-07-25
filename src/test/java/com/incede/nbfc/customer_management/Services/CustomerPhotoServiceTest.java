@@ -98,6 +98,7 @@ public class CustomerPhotoServiceTest {
     	assertEquals("No data found for id: "+photoModel.getPhotoId(),thrown.getMessage());
     }
     
+    @Test
     void getphotoDetailsByPhotoID() {
     	when(photoRepo.findByPhotoIdAndIsDeleteFalse(123)).thenReturn(photoModel);
     	CustomerPhotoDto result = photoService.getCustomerDtoByPhotoId(123);

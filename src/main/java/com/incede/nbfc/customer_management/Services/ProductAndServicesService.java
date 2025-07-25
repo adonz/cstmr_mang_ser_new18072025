@@ -132,12 +132,14 @@ public class ProductAndServicesService {
 	}
 
 	@Transactional
-	public void softDeleteProductAndService(Integer serviceId, Integer updatedBy) {
+	public  String softDeleteProductAndService(Integer serviceId, Integer updatedBy) {
 		try { 
  			ProductAndServicesModel productServiceCatalogueDelete = productAndServiceRepository.findByProductServiceIdAndIsDeleteFalse(serviceId);
  			if(productServiceCatalogueDelete ==null) throw new BusinessException("Data not found for id "+serviceId);
  			productServiceCatalogueDelete.setIsDelete(true);
  			productServiceCatalogueDelete.setUpdatedBy(updatedBy);
+ 			
+ 			return "data deleted successfully id:"+serviceId;
 		}
 		catch(BusinessException e) {
 			throw e;

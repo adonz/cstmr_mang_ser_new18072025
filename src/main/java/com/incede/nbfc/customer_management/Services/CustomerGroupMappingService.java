@@ -127,7 +127,7 @@ private final CustomerGroupMappingRepository groupMappingRepository;
 			groupMappingRepository.save(customerGroupModel);
 			
 			return "customer additional details wit id "+groupDto.getGroupMappingId()+"deleted successfully" ;
-		}catch(Exception e) {
+		}catch(BusinessException e) {
 			throw e;
 		}
 	}

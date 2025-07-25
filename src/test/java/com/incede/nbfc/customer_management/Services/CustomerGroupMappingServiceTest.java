@@ -87,5 +87,23 @@ public class CustomerGroupMappingServiceTest {
 	    assertEquals("Details not founf for id:" + groupMappingId, ex.getMessage());
 	    verify(groupMappingRepository, times(1)).findByGroupMappingIdAndIsDeleteFalse(groupMappingId);
 	}
+	
+	@Test
+	void softDeleteCustomerGroupmapping_Success() {
+	    when(groupMappingRepository.findByGroupMappingIdAndIsDeleteFalse(1)).thenReturn(groupMappingModel);
+ 	     String result = groupMappingSrvice.SoftdeleteCustomerGroupDetailsById(groupMappingDto);
+         assertEquals("customer additional details wit id "+1+"deleted successfully",result);
+
+	}
+	
+	@Test
+	void softDeleteCustomerGroupmapping_Failure() {
+	    when(groupMappingRepository.findByGroupMappingIdAndIsDeleteFalse(1)).thenReturn(null);
+	    BusinessException ex = assertThrows(BusinessException.class, () -> {
+	        groupMappingSrvice.SoftdeleteCustomerGroupDetailsById(groupMappingDto);
+	    });
+	    assertEquals("Details not found for Id "+ 1, ex.getMessage());
+
+	}
 
 }

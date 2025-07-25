@@ -86,7 +86,7 @@ public class LeadStageMastermanagementService {
 
 	// delete lead stage master management
     @Transactional
-	public void softDeleteLeadStageMaster(Integer leadStageId, Integer updatedBy) {
+	public  String softDeleteLeadStageMaster(Integer leadStageId, Integer updatedBy) {
 		 try {
 			 LeadStageMasterManagement deletingData = leadStageRepository.findByStageIdAndIsDeleteFalse(leadStageId);
 			 if(deletingData == null) throw new DataNotFoundException("data not found for id :"+leadStageId);
@@ -94,6 +94,8 @@ public class LeadStageMastermanagementService {
 			 deletingData.setUpdatedBy(updatedBy);
 			 
 			 leadStageRepository.save(deletingData);
+			 
+			 return "Data delete successfully for id :"+leadStageId;
 		 }
 		 catch(BusinessException e) {
 			 throw e;

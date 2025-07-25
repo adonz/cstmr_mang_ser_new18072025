@@ -2,6 +2,8 @@ package com.incede.nbfc.customer_management.Services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
@@ -15,6 +17,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.incede.nbfc.customer_management.DTOs.LeadStageMasterManagementDto;
+import com.incede.nbfc.customer_management.Exceptions.BusinessException.BusinessException;
+import com.incede.nbfc.customer_management.Exceptions.DataNotFoundException.DataNotFoundException;
 import com.incede.nbfc.customer_management.Models.LeadStageMasterManagement;
 import com.incede.nbfc.customer_management.Repositories.LeadStageMasterManagementRepository;
 
@@ -67,4 +71,33 @@ public class LeadStageMasterManagementServiceTest {
 	        assertEquals(1, result.getStageId());
 	        assertEquals(1, result.getCreatedBy());
 	}
+	
+	@Test
+	void getLeadStageMasterDetailsByStageId_fails() {
+		when(leadStageRepository.findByStageIdAndIsDeleteFalse(1)).thenReturn(null);
+		DataNotFoundException exp = assertThrows(DataNotFoundException.class,
+				()->{leadStageService.getByLeadStageMatserId(1);});
+		assertTrue(exp.getMessage().contains("data not found for id:"+1));
+
+	}
+	
+	@Test
+	void softDeleteLeadStageMasterDetails_Success() {
+		when(leadStageRepository.findByStageIdAndIsDeleteFalse(1)).thenReturn(leadStageModel);
+		 String result  = leadStageService.softDeleteLeadStageMaster(1,1);
+		 assertEquals("Data delete successfully for id :"+1, result);
+
+	}
+	
+	@Test
+	void softDeleteLeadStageMasterDetails_Failure() {
+		when(leadStageRepository.findByStageIdAndIsDeleteFalse(1)).thenReturn(null);
+		DataNotFoundException exp = assertThrows(DataNotFoundException.class,
+				()->{leadStageService.softDeleteLeadStageMaster(1,1);});
+		assertTrue(exp.getMessage().contains("data not found for id :"+1));
+	}
+	
+	
+	
+	
 }

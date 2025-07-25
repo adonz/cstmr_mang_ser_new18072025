@@ -53,8 +53,8 @@ public class ProductAndServicesController {
             @PathVariable Integer productId,
             @RequestParam Integer  updatedBy) {
 
-    	productAndServicesService.softDeleteProductAndService(productId, updatedBy);
-        return ResponseEntity.ok(ResponseWrapper.success("Leas Stage Master soft-deleted successfully."));
+    	String result = productAndServicesService.softDeleteProductAndService(productId, updatedBy);
+        return ResponseEntity.ok(ResponseWrapper.success(result,"Leas Stage Master soft-deleted successfully."));
     }
     
 	@GetMapping("/product-service-catalogue/active-accounts")

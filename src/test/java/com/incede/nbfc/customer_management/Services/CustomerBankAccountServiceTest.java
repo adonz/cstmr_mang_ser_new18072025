@@ -14,6 +14,7 @@ import static org.mockito.Mockito.times;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.incede.nbfc.customer_management.DTOs.CustomerBankAccountDto;
+import com.incede.nbfc.customer_management.Exceptions.BusinessException.BusinessException;
 import com.incede.nbfc.customer_management.Models.CustomerBankAccountModel;
 import com.incede.nbfc.customer_management.Repositories.CustomerBankAccountRepository;
 
@@ -83,6 +84,14 @@ public class CustomerBankAccountServiceTest {
 
         verify(repository, times(1)).findByBankAccountIdAndIsDeleteFalse(1);
     }
+    @Test
+    void testGetBankAccountById_Failed() {
+        when(repository.findByBankAccountIdAndIsDeleteFalse(1)).thenReturn( null);
+        BusinessException thrown = assertThrows(BusinessException.class,
+    			()->service.getCustomerBankDetailsByBankAccountId(1));
+    			assertEquals("Customer with account ID "+1+"not exists",thrown.getMessage());
+ 
+    }
     
     @Test
     void softDeleteBankAccountId_success() {
@@ -90,6 +99,16 @@ public class CustomerBankAccountServiceTest {
          String result = service.softDeleteCustomersBankAccountDetails(sampleAccountDto);
          assertEquals("Customer Account with Id" + sampleAccountModel.getBankAccountId() + "deleted successfully",result);
     }
+    
+    @Test
+    void testSoftdeleteBankAccountId_Error() {
+    	when(repository.findByBankAccountIdAndIsDeleteFalse(1)).thenReturn( null);
+    	BusinessException thrown = assertThrows(BusinessException.class,
+    			()->service.softDeleteCustomersBankAccountDetails(sampleAccountDto));
+    			assertEquals("Bank details not found for id"+1,thrown.getMessage());
+     }
+    
+    
     
     
 }

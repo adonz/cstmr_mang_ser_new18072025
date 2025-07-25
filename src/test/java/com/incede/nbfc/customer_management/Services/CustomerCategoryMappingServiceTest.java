@@ -38,6 +38,7 @@ public class CustomerCategoryMappingServiceTest {
     @BeforeEach
     void setUp() {
         customerCategoryDto = new CustomerCategoryMappingDto();
+        customerCategoryDto.setCategoryMappingId(1);
         customerCategoryDto.setCustomerId(1001);
         customerCategoryDto.setCategoryId(2002);
         customerCategoryDto.setAssignedDate(LocalDateTime.now().minusDays(1));
@@ -50,6 +51,7 @@ public class CustomerCategoryMappingServiceTest {
         customerCategoryDto.setUpdatedBy(102);
 
         customerCategoryModel = new CustomerCategoryMappingModel();
+        customerCategoryDto.setCategoryMappingId(1);
         customerCategoryModel.setCustomerId(customerCategoryDto.getCustomerId());
         customerCategoryModel.setCategoryId(customerCategoryDto.getCategoryId());
         customerCategoryModel.setAssignedDate(customerCategoryDto.getAssignedDate());
@@ -74,14 +76,33 @@ public class CustomerCategoryMappingServiceTest {
     
     @Test
     void getCustomerCategoryById_invalidId_shouldThrowException() {
-         when(categoryRepository.findByCategoryMappingIdAndIsDeleteFalse(99))
+         when(categoryRepository.findByCategoryMappingIdAndIsDeleteFalse(1))
                .thenReturn(null);
          BusinessException thrown =  assertThrows(BusinessException.class, () -> {
-        	 categoryService.getCustomerCategoryById(99);
+        	 categoryService.getCustomerCategoryById(1);
         });
 
-         assertTrue(thrown.getMessage().contains("Details not founf for id:99"));
+         assertTrue(thrown.getMessage().contains("Details not founf for id:1"));
     }
+    
+    @Test
+    void softDeleteCustomerCategoryById_success() {
+        when(categoryRepository.findByCategoryMappingIdAndIsDeleteFalse(1)).thenReturn(customerCategoryModel);
+         String result = categoryService.SoftdeleteCustomerCategoryDetailsById(customerCategoryDto);
+         assertEquals("customer additional details wit id "+1+"deleted successfully",result);
+    }
+    
+    @Test
+    void softDeleteCustomerCategoryById_Fails() {
+        when(categoryRepository.findByCategoryMappingIdAndIsDeleteFalse(1)).thenReturn(null);
+        BusinessException thrown =  assertThrows(BusinessException.class, () -> {
+       	 categoryService.SoftdeleteCustomerCategoryDetailsById(customerCategoryDto);
+       });
+
+        assertTrue(thrown.getMessage().contains("Details not found for Id "+ 1));
+    }
+    
+    
    
     
 }

@@ -56,8 +56,9 @@ public class LeadStageMasterManagementController {
             @PathVariable Integer leadStageId,
             @RequestParam Integer  updatedBy) {
 
-    	leadStageService.softDeleteLeadStageMaster(leadStageId, updatedBy);
-        return ResponseEntity.ok(ResponseWrapper.success("Leas Stage Master soft-deleted successfully."));
+    	
+    	String result = leadStageService.softDeleteLeadStageMaster(leadStageId, updatedBy);
+        return ResponseEntity.ok(ResponseWrapper.success(result ,"Leas Stage Master soft-deleted successfully."));
     }
     
 	@GetMapping("/lead-master-stage-management/active-accounts")

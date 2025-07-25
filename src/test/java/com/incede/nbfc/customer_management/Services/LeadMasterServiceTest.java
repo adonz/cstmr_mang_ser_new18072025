@@ -28,42 +28,44 @@ public class LeadMasterServiceTest {
 	private LeadMasterRepository leadRepository;
 	@InjectMocks
 	private LeadMasterService leadService;
+	
 	private LeadMasterModel leadModel;
-	private LeadMasterDto leadDto;
+	
+	private LeadMasterDto leadMDto;
 	
 	@BeforeEach
 	public void setUp() {
 		
-		   LeadMasterDto dto = new LeadMasterDto();
-		    dto.setLeadId(1);
-		    dto.setTenantId(101);
-		    dto.setLeadCode("LD123");
-		    dto.setFullName("John Doe");
-		    dto.setContactNumber("9876543210");
-		    dto.setGenderId(1);
-		    dto.setEmailId("john@example.com");
+			leadMDto  = new LeadMasterDto();
+			leadMDto.setLeadId(1);
+			leadMDto.setTenantId(101);
+			leadMDto.setLeadCode("LD123");
+			leadMDto.setFullName("John Doe");
+			leadMDto.setContactNumber("9876543210");
+			leadMDto.setGenderId(1);
+			leadMDto.setEmailId("john@example.com");
 
-		    dto.setDoorNumber("12B");
-		    dto.setAddressLine1("Street 1");
-		    dto.setAddressLine2("Near Mall");
-		    dto.setLandMark("Big Tower");
-		    dto.setPlaceName("Ernakulam");
-		    dto.setCity("Cochin");
-		    dto.setDistrict("Ernakulam");
-		    dto.setStateName("Kerala");
-		    dto.setCountryId(91);
-		    dto.setPincode("682001");
-		    dto.setRemarks("Test lead");
-		    dto.setSourceId(10);
-		    dto.setStageId(3);
-		    dto.setStatusId(1);
-		    dto.setInterestedProductId(1001);
-		    dto.setIdentity(UUID.randomUUID());
-		    dto.setIsDelete(false);
-		    dto.setCreatedAt(LocalDateTime.now());
-		    dto.setUpdatedAt(LocalDateTime.now());
-		    dto.setCreatedBy(5001);
-		    dto.setUpdatedBy(5002);
+			leadMDto.setDoorNumber("12B");
+			leadMDto.setAddressLine1("Street 1");
+			leadMDto.setAddressLine2("Near Mall");
+			leadMDto.setLandMark("Big Tower");
+			leadMDto.setPlaceName("Ernakulam");
+			leadMDto.setCity("Cochin");
+			leadMDto.setDistrict("Ernakulam");
+			leadMDto.setStateName("Kerala");
+			leadMDto.setCountryId(91);
+			leadMDto.setPincode("682001");
+			leadMDto.setRemarks("Test lead");
+			leadMDto.setSourceId(10);
+			leadMDto.setStageId(3);
+			leadMDto.setStatusId(1);
+			leadMDto.setInterestedProductId(1001);
+			leadMDto.setIdentity(UUID.randomUUID());
+			leadMDto.setIsDelete(false);
+			leadMDto.setCreatedAt(LocalDateTime.now());
+			leadMDto.setUpdatedAt(LocalDateTime.now());
+			leadMDto.setCreatedBy(5001);
+			leadMDto.setUpdatedBy(5002);
 		    
 		      leadModel = new LeadMasterModel();
 		      leadModel.setLeadId(1);
@@ -129,6 +131,26 @@ public class LeadMasterServiceTest {
 
         assertTrue(ex.getMessage().contains("lead Id"));
     }
+    
+    @Test
+    void softDeleteLeadMasterById_Success() {
+        when(leadRepository.findByLeadIdAndIsDeleteFalse(1)).thenReturn(leadModel);
+         String result = leadService.softDeleteLeadMaster(leadMDto);
+         assertEquals("Data deleted successfully for id "+1,result);
+
+    }
+    
+    @Test
+    void softDeleteLeadMasterById_Failure() {
+        when(leadRepository.findByLeadIdAndIsDeleteFalse(1)).thenReturn(null);
+        BusinessException ex = assertThrows(BusinessException.class, () -> {
+       	 leadService.softDeleteLeadMaster(leadMDto);
+       });
+
+       assertTrue(ex.getMessage().contains("Data not found for id :"+1));
+
+    }
+    
 	
 
 }
