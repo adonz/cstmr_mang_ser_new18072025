@@ -8,7 +8,6 @@ spring:
       max-file-size: 5MB
       max-request-size: 10MB
 
-
   datasource:
     url: jdbc:postgresql://localhost:5432/customer_management_services
     username: postgres
@@ -20,6 +19,11 @@ spring:
       idle-timeout: 30000
       connection-timeout: 20000
       max-lifetime: 1800000
+
+redis:
+  host: localhost
+  port: 6379
+  timeout: 60000
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
